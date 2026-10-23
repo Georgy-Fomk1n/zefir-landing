@@ -183,7 +183,7 @@ else {
   const r = readFileSync(robotsPath, 'utf8');
   if (!r.includes(`Sitemap: ${SITE_URL}/sitemap.xml`)) errors.push('robots.txt: нет Sitemap');
   for (const d of ['/account/', '/cart/', '/checkout/']) if (!r.includes(`Disallow: ${d}`)) errors.push(`robots.txt: нет Disallow ${d}`);
-  if (/admin|seller|courier|штат|xn--80atyc/i.test(r)) errors.push('robots.txt раскрывает служебные пути');
+  if (/admin|seller|courier|штат|xn--80a9abv/i.test(r)) errors.push('robots.txt раскрывает служебные пути');
   if (/^Disallow:\s*\/\s*$/m.test(r)) errors.push('robots.txt закрывает весь сайт (это staging-сборка?)');
 }
 

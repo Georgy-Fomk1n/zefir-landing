@@ -5,6 +5,7 @@ namespace App\Enums;
 /**
  * Абонемент: pending (ждёт первой оплаты) → active → (продление успешно) active
  * active → past_due (списание не прошло, идут повторы) → grace (повторы исчерпаны, период отсрочки) → expired
+ * active → grace напрямую — в режиме продления по ссылке, если период кончился без оплаты
  * Отмена автопродления не прерывает оплаченный период: active → cancelled → expired по окончании.
  */
 enum SubscriptionStatus: string
@@ -22,8 +23,8 @@ enum SubscriptionStatus: string
     {
         return match ($this) {
             self::Pending => [self::Active, self::Expired],
-            self::Active => [self::Active, self::PastDue, self::Cancelled, self::Expired],
-            self::PastDue => [self::Active, self::Grace, self::Cancelled],
+            self::Active => [self::Active, self::PastDue, self::Grace, self::Cancelled, self::Expired],
+            self::PastDue => [self::Active, self::PastDue, self::Grace, self::Cancelled],
             self::Grace => [self::Active, self::Expired, self::Cancelled],
             self::Cancelled => [self::Expired],
             self::Expired => [],
