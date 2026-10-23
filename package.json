@@ -1,0 +1,28 @@
+{
+  "name": "zefir-i-pryanik",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/shared",
+    "frontend",
+    "staff"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "build": "npm run build -w frontend && npm run build -w staff",
+    "seo:check": "npm run seo:check -w frontend"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "eslint": "^9.39.1",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "globals": "^16.5.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.48.0"
+  }
+}
