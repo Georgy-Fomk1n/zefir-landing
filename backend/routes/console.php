@@ -8,7 +8,9 @@ use App\Services\Orders\OrderLifecycle;
 use App\Services\Orders\SlotService;
 use App\Services\Payments\PaymentService;
 use App\Services\Subscriptions\SubscriptionService;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schedule;
 use Illuminate\Support\Str;
 
@@ -59,3 +61,72 @@ Artisan::command('staff:create-admin {email} {name}', function () {
     $this->info($user->wasRecentlyCreated ? "Создан администратор, временный пароль: {$password}" : 'Пользователю выдана роль admin');
     $this->line('При первом входе на штат.зефир-и-пряник.рф потребуется настроить 2FA.');
 })->purpose('Создать первого администратора (без SSH — через деплой-хук не вызывается)');
+
+Artisan::command('api:openapi {--output=../docs/openapi.json}', function () {
+    // Справочник API из реальных маршрутов: путь, метод, авторизация, роли, правила валидации FormRequest.
+    // Схемы ответов описаны типами packages/shared/src/types.ts (одни и те же для обоих фронтендов).
+    $paths = [];
+    foreach (Route::getRoutes() as $route) {
+        if (! str_starts_with($route->uri(), 'api/')) {
+            continue;
+        }
+        $mw = $route->gatherMiddleware();
+        $auth = in_array('auth:sanctum', $mw, true);
+        $ability = collect($mw)->first(fn ($m) => str_starts_with($m, 'abilities:'));
+        $roles = collect($mw)->first(fn ($m) => str_starts_with($m, 'role:'));
+        $path = '/'.preg_replace('/\{(\w+)\??\}/', '{$1}', $route->uri());
+        $tag = match (true) {
+            str_starts_with($path, '/api/staff/admin') => 'Админ',
+            str_starts_with($path, '/api/staff/seller') => 'Продавец',
+            str_starts_with($path, '/api/staff/courier') => 'Курьер',
+            str_starts_with($path, '/api/staff') => 'Сотрудники: вход',
+            str_starts_with($path, '/api/account'), str_starts_with($path, '/api/cart') && $auth => 'Кабинет покупателя',
+            str_starts_with($path, '/api/auth') => 'Покупатель: вход',
+            default => 'Публичное API',
+        };
+        $rules = [];
+        $action = $route->getActionName();
+        if (str_contains($action, '@')) {
+            [$class, $method] = explode('@', $action);
+            foreach ((new ReflectionMethod($class, $method))->getParameters() as $param) {
+                $type = $param->getType()?->getName();
+                if ($type && is_subclass_of($type, FormRequest::class)) {
+                    $rules = collect((new $type)->rules())->map(fn ($r) => is_array($r) ? implode('|', array_map(fn ($x) => is_string($x) ? $x : class_basename($x), $r)) : $r)->all();
+                }
+            }
+        }
+        foreach (array_diff($route->methods(), ['HEAD']) as $httpMethod) {
+            $op = [
+                'tags' => [$tag],
+                'operationId' => strtolower($httpMethod).str_replace(['/', '{', '}', '-', '.'], ['_', '', '', '_', '_'], substr($path, 4)),
+                'summary' => class_basename(str_replace('@', '::', $action)),
+                'responses' => ['200' => ['description' => 'OK']],
+            ];
+            if ($auth) {
+                $op['security'] = [['bearer' => []]];
+                $op['description'] = trim(($ability ? 'Токен: '.substr($ability, 10).'. ' : '').($roles ? 'Роли: '.substr($roles, 5).'.' : ''));
+            }
+            preg_match_all('/\{(\w+)\}/', $path, $m);
+            if ($m[1]) {
+                $op['parameters'] = array_map(fn ($n) => ['name' => $n, 'in' => 'path', 'required' => true, 'schema' => ['type' => 'string']], $m[1]);
+            }
+            if ($rules) {
+                $op['requestBody'] = ['content' => ['application/json' => ['schema' => [
+                    'type' => 'object',
+                    'properties' => collect($rules)->mapWithKeys(fn ($r, $k) => [$k => ['type' => 'string', 'description' => $r]])->all(),
+                ]]]];
+            }
+            $paths[$path][strtolower($httpMethod)] = $op;
+        }
+    }
+    ksort($paths);
+    $doc = [
+        'openapi' => '3.1.0',
+        'info' => ['title' => 'Зефир и пряник API', 'version' => '1.0', 'description' => 'Сгенерировано командой php artisan api:openapi. Типы ответов — packages/shared/src/types.ts.'],
+        'servers' => [['url' => 'https://api.xn-----mlchgbbqzthe9b5k.xn--p1ai'], ['url' => 'http://localhost:8000']],
+        'components' => ['securitySchemes' => ['bearer' => ['type' => 'http', 'scheme' => 'bearer', 'description' => 'Sanctum API token']]],
+        'paths' => $paths,
+    ];
+    file_put_contents(base_path($this->option('output')), json_encode($doc, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)."\n");
+    $this->info('OpenAPI: '.count($paths).' путей');
+})->purpose('Сгенерировать docs/openapi.json из маршрутов');

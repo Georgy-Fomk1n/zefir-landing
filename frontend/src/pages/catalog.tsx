@@ -1,7 +1,7 @@
 import { formatPrice, type Product } from '@zefir/shared';
 import { useMemo, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
-import { Breadcrumbs, ChannelButtons, crumbs, ProductCard, useLiveProduct } from '../components/common';
+import { Breadcrumbs, CARD_SIZES, ChannelButtons, crumbs, ProductCard, useLiveProduct } from '../components/common';
 import { pages } from '../content/pages';
 import { catalog, categories, categoryBySlug, categoryUrl, minPrice, productBySlug, productsInCategory, productUrl, reviewsFor } from '../data/catalog';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -74,6 +74,7 @@ export function CategoryPage() {
   const bc = crumbs({ name: 'Каталог', path: '/catalog/' }, { name: category.name, path });
   // Параметры сортировки/фильтра и страницы пагинации: canonical на основную категорию, noindex,follow
   const isVariant = params.toString() !== '' || page > 1;
+  const firstImage = visible[0]?.media.find((m) => m.type === 'image')?.name;
 
   return (
     <>
@@ -84,6 +85,7 @@ export function CategoryPage() {
         og={all[0]?.media.find((m) => m.type === 'image')?.name}
         noindex={category.seo.noindex || isVariant}
         jsonLd={[bc.jsonLd, itemList(h1, all)]}
+        preload={firstImage ? { srcSet: preloadSrcSet(firstImage), sizes: CARD_SIZES } : undefined}
       />
       <div className="container page">
         <Breadcrumbs items={bc.items} />
@@ -120,7 +122,7 @@ export function CategoryPage() {
 
         {visible.length > 0 && (
           <div className="grid grid--3">
-            {visible.map((p) => <ProductCard key={p.slug} product={p} headingLevel={2} />)}
+            {visible.map((p, i) => <ProductCard key={p.slug} product={p} headingLevel={2} priority={i === 0} />)}
           </div>
         )}
 

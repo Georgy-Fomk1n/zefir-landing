@@ -14,7 +14,7 @@ const icons = join(root, 'public');
 const manifestPath = join(root, 'src', 'data', 'media.json');
 const force = process.argv.includes('--force');
 
-const WIDTHS = [400, 800, 1200];
+const WIDTHS = [400, 600, 800, 1200];
 const SKIP_IMAGES = new Set(['logo', 'glori-logo']);
 
 mkdirSync(out, { recursive: true });
@@ -47,9 +47,9 @@ for (const file of readdirSync(src).sort()) {
     for (const w of widths) {
       const scale = `scale=${w}:-2:flags=lanczos`;
       once(join(out, `${name}-${w}.webp`), () =>
-        ff(['-i', input, '-vf', scale, '-c:v', 'libwebp', '-quality', '78', '-compression_level', '6', join(out, `${name}-${w}.webp`)]));
+        ff(['-i', input, '-vf', scale, '-c:v', 'libwebp', '-quality', '72', '-compression_level', '6', join(out, `${name}-${w}.webp`)]));
       once(join(out, `${name}-${w}.avif`), () =>
-        ff(['-i', input, '-vf', `${scale},format=yuv420p`, '-c:v', 'libaom-av1', '-still-picture', '1', '-crf', '34', '-cpu-used', '6', join(out, `${name}-${w}.avif`)]));
+        ff(['-i', input, '-vf', `${scale},format=yuv420p`, '-c:v', 'libaom-av1', '-still-picture', '1', '-crf', '38', '-cpu-used', '6', join(out, `${name}-${w}.avif`)]));
     }
     once(join(out, `${name}-og.jpg`), () =>
       ff(['-i', input, '-vf', 'scale=1200:630:force_original_aspect_ratio=increase,crop=1200:630', '-q:v', '4', join(out, `${name}-og.jpg`)]));

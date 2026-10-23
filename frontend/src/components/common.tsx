@@ -108,14 +108,17 @@ export function useLiveProduct(slug: string, fallback: Product) {
   });
 }
 
-export function ProductCard({ product, headingLevel = 3 }: { product: Product; headingLevel?: 2 | 3 }) {
+export const CARD_SIZES = '(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw';
+
+/** priority — первая карточка над сгибом (LCP на страницах категорий): без lazy, с высоким приоритетом */
+export function ProductCard({ product, headingLevel = 3, priority = false }: { product: Product; headingLevel?: 2 | 3; priority?: boolean }) {
   const media = product.media[0];
   const { price, from } = minPrice(product);
   const Heading = `h${headingLevel}` as 'h2' | 'h3';
   return (
     <article className="card">
       <Link to={productUrl(product)} className="card__image">
-        {media && <Picture name={media.name} alt={media.alt} sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" />}
+        {media && <Picture name={media.name} alt={media.alt} sizes={CARD_SIZES} priority={priority} />}
       </Link>
       <div className="card__body">
         <Heading className="card__title"><Link to={productUrl(product)}>{product.name}</Link></Heading>

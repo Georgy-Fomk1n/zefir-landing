@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\Deploy\Bootstrapper;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
@@ -38,6 +39,9 @@ class DeployHookController extends Controller
             foreach ([['migrate', ['--force' => true]], ['config:cache', []], ['route:cache', []], ['view:cache', []], ['event:cache', []]] as [$cmd, $args]) {
                 Artisan::call($cmd, $args);
                 $steps[] = $cmd;
+                if ($cmd === 'migrate') {
+                    $steps = [...$steps, ...app(Bootstrapper::class)->run()];
+                }
             }
         } catch (Throwable $e) {
             $ok = false;

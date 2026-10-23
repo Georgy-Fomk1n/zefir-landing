@@ -113,6 +113,12 @@ return [
         'endpoint' => 'https://yandex.com/indexnow',
     ],
 
+    // Первичное создание администратора деплой-хуком (без SSH). Удалить из .env после первого входа.
+    'bootstrap_admin' => [
+        'email' => env('BOOTSTRAP_ADMIN_EMAIL'),
+        'password' => env('BOOTSTRAP_ADMIN_PASSWORD'),
+    ],
+
     'deploy_hook' => [
         'enabled' => (bool) env('DEPLOY_HOOK_ENABLED', false),
         'token' => env('DEPLOY_HOOK_TOKEN'),

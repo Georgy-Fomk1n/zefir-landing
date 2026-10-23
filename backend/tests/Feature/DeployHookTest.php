@@ -1,5 +1,10 @@
 <?php
 
+use App\Enums\Role;
+use App\Models\Product;
+use App\Models\User;
+use App\Services\Deploy\Bootstrapper;
+
 it('выключенный хук отдаёт 404', function () {
     config(['shop.deploy_hook.enabled' => false, 'shop.deploy_hook.token' => 'secret']);
     $this->postJson('/api/_deploy/run', [], ['X-Deploy-Token' => 'secret'])->assertNotFound();
@@ -23,4 +28,13 @@ it('ограничивает частоту вызовов хука', function (
         $this->postJson('/api/_deploy/run');
     }
     $this->postJson('/api/_deploy/run')->assertTooManyRequests();
+});
+
+it('на пустой базе наполняет каталог и создаёт первого администратора', function () {
+    config(['shop.bootstrap_admin.email' => 'Owner@Example.test', 'shop.bootstrap_admin.password' => 'very-long-password']);
+    expect(app(Bootstrapper::class)->run())->toBe(['seed:catalog', 'bootstrap:admin'])
+        ->and(Product::query()->count())->toBe(8)
+        ->and(User::query()->where('email', 'owner@example.test')->first()->hasRole(Role::Admin))->toBeTrue()
+        // Повторный запуск ничего не делает
+        ->and(app(Bootstrapper::class)->run())->toBe([]);
 });

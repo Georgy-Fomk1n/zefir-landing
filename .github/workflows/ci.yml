@@ -1,0 +1,118 @@
+# Проверки pull request и пушей (без деплоя): backend, frontend, служебное приложение, SEO, Lighthouse.
+name: CI
+
+# Пуши в develop/main проверяются внутри Deploy (вызов этого же workflow перед выкладкой).
+on:
+  pull_request:
+  workflow_call:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    name: Backend (Pint, Pest на MySQL)
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: backend
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_DATABASE: zefir_test
+          MYSQL_ROOT_PASSWORD: root
+        ports: ['3306:3306']
+        options: >-
+          --health-cmd="mysqladmin ping -proot" --health-interval=5s --health-timeout=3s --health-retries=20
+    env:
+      DB_CONNECTION: mysql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_DATABASE: zefir_test
+      DB_USERNAME: root
+      DB_PASSWORD: root
+    steps:
+      - uses: actions/checkout@v5
+      - uses: shivammathur/setup-php@v2
+        with:
+          # Версия PHP на хостинге Sprinthost
+          php-version: '8.5'
+          extensions: mbstring, pdo_mysql, intl, openssl, gd
+          coverage: none
+          tools: composer:v2
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/composer
+          key: composer-${{ hashFiles('backend/composer.lock') }}
+      - run: composer install --no-interaction --no-progress --prefer-dist
+      - run: cp .env.example .env && php artisan key:generate
+      - run: vendor/bin/pint --test
+      - run: php artisan migrate --force
+      - run: vendor/bin/pest --parallel
+
+  frontend:
+    name: Frontend и служебное приложение (ESLint, tsc, Vitest, сборка)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0 # git log нужен для lastmod в sitemap
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run catalog -w frontend
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - name: Сборка staff
+        run: npm run build -w staff
+      - name: Production-сборка публичного сайта с пререндером (каталог из seed)
+        run: npm run build -w frontend
+        env:
+          VITE_APP_ENV: production
+          VITE_API_URL: https://api.xn-----mlchgbbqzthe9b5k.xn--p1ai
+      - name: SEO-проверки (6.10)
+        run: npm run seo:check
+      - name: Старого домена нет нигде в репозитории
+        run: |
+          if git grep -n "zefiripryanik\.ru" -- . ':!docs/**' ':!frontend/scripts/seo-check.mjs' ':!packages/shared/src/site.ts' ':!.github/**'; then
+            echo "Найден старый домен zefiripryanik.ru"; exit 1
+          fi
+      - name: Служебный код не попал в публичный бандл
+        run: |
+          if grep -rlE "staff/admin|staff/courier|staff/seller" frontend/dist/assets; then
+            echo "В публичном бандле есть служебные маршруты"; exit 1
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: frontend/dist
+          retention-days: 3
+
+  lighthouse:
+    name: Lighthouse CI (главная, категория, товар)
+    needs: frontend
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - uses: actions/download-artifact@v5
+        with:
+          name: frontend-dist
+          path: frontend/dist
+      - run: npx -y @lhci/cli@0.15.1 autorun --config=lighthouserc.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse-report
+          path: .lighthouseci
+          retention-days: 14
