@@ -49,7 +49,8 @@ function Login() {
         } else setStep('code');
         return;
       }
-      tokens.set(res.token!);
+      const roles = res.user!.roles;
+      tokens.setPersistent(res.token!, roles.length === 1 && roles[0] === 'courier');
       qc.setQueryData(['me'], res.user);
       const next = new URLSearchParams(location.search).get('next');
       navigate(next && next.startsWith('/') ? next : homeFor(res.user!.roles), { replace: true });

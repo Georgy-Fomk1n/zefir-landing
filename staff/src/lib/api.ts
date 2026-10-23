@@ -1,17 +1,42 @@
-import { createApiClient, storageTokenStore } from '@zefir/shared';
+import { createApiClient, type TokenStore } from '@zefir/shared';
 
 const env = import.meta.env;
 export const API_URL = (env.VITE_API_URL as string | undefined) ?? 'http://localhost:8000';
 
-// Служебный токен живёт только на штат.зефир-и-пряник.рф и только в sessionStorage вкладки:
-// закрыли вкладку — нужен повторный вход. На сервере срок жизни ограничен SANCTUM_STAFF_TTL.
-// Исключение — курьер: PWA на телефоне держит токен в localStorage до конца смены (до истечения TTL).
-const storage = () => {
-  if (typeof window === 'undefined') return undefined;
-  return window.location.pathname.startsWith('/courier') ? window.localStorage : window.sessionStorage;
-};
+const KEY = 'zp_staff_token';
 
-export const tokens = storageTokenStore('zp_staff_token', storage);
+function safe<T>(fn: () => T, fallback: T): T {
+  try {
+    return fn();
+  } catch {
+    return fallback;
+  }
+}
+
+/**
+ * Служебный токен живёт только на штат.зефир-и-пряник.рф. По умолчанию — в sessionStorage вкладки:
+ * закрыли вкладку — нужен повторный вход. Исключение — курьер без других ролей: PWA на телефоне
+ * держит токен в localStorage (до истечения SANCTUM_STAFF_TTL на сервере), чтобы смена не прерывалась.
+ */
+export const tokens: TokenStore & { setPersistent(token: string, persistent: boolean): void } = {
+  get: () => safe(() => window.sessionStorage.getItem(KEY) ?? window.localStorage.getItem(KEY), null),
+  set(token) {
+    safe(() => {
+      if (token) window.sessionStorage.setItem(KEY, token);
+      else {
+        window.sessionStorage.removeItem(KEY);
+        window.localStorage.removeItem(KEY);
+      }
+    }, undefined);
+  },
+  setPersistent(token, persistent) {
+    safe(() => {
+      window.sessionStorage.removeItem(KEY);
+      window.localStorage.removeItem(KEY);
+      (persistent ? window.localStorage : window.sessionStorage).setItem(KEY, token);
+    }, undefined);
+  },
+};
 
 export const api = createApiClient({
   baseUrl: API_URL,

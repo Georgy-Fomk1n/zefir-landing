@@ -40,6 +40,7 @@ const assets = new Set(files.map((f) => `/${relative(dist, f)}`));
 const titles = new Map();
 const descriptions = new Map();
 const checkedLinks = new Set();
+const noindexPublic = [];
 
 function validateJsonLd(page, data) {
   const items = Array.isArray(data) ? data : [data];
@@ -80,7 +81,13 @@ for (const file of htmlFiles) {
   const robots = doc.querySelector('meta[name="robots"]')?.getAttribute('content') ?? '';
   const noindex = robots.includes('noindex');
   if ((isError || isPrivate) && !noindex) fail(page, 'служебная страница без noindex');
-  if (!isError && !isPrivate && noindex) fail(page, 'публичная страница с noindex (сборка не production?)');
+  // noindex отдельной страницы может быть решением редактора (SEO-поле в админке) — это предупреждение;
+  // noindex на главной или на большинстве страниц — признак не-production сборки, это ошибка (проверка ниже)
+  if (!isError && !isPrivate && noindex) {
+    noindexPublic.push(page);
+    warn.push(`${page}: noindex (проверьте, что так задумано)`);
+  }
+  const skipIndexChecks = isError || isPrivate || noindex;
 
   const title = doc.querySelector('title')?.text.trim() ?? '';
   const description = doc.querySelector('meta[name="description"]')?.getAttribute('content')?.trim() ?? '';
@@ -102,7 +109,7 @@ for (const file of htmlFiles) {
     else if (!existing.has(path) && !assets.has(path) && !/^\/account\//.test(path)) fail(page, `битая внутренняя ссылка ${href}`);
     else if (!path.endsWith('/') && !path.includes('.')) fail(page, `ссылка без слэша в конце ${href}`);
   }
-  if (isError || isPrivate) continue;
+  if (skipIndexChecks) continue;
 
   if (title.length > TITLE_MAX) fail(page, `title длиннее ${TITLE_MAX} (${title.length}): ${title}`);
   if (description.length > DESC_MAX) fail(page, `description длиннее ${DESC_MAX} (${description.length})`);
@@ -150,6 +157,10 @@ for (const file of htmlFiles) {
       break;
     }
   }
+}
+
+if (noindexPublic.includes('/') || noindexPublic.length > titles.size) {
+  errors.push(`noindex на главной или на большинстве публичных страниц (${noindexPublic.length}): сборка не production?`);
 }
 
 // 404/500

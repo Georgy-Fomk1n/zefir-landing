@@ -1,6 +1,6 @@
 import type { CartLine, User } from '@zefir/shared';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { api, tokens } from './api';
 import { useCart } from './cart';
 import { reachGoal } from './metrika';
@@ -13,7 +13,11 @@ interface AuthResponse {
 export function useAuth() {
   const qc = useQueryClient();
   const cart = useCart();
-  const hasToken = typeof window !== 'undefined' && Boolean(tokens.get());
+  // Токен читаем только после монтирования: пререндер всегда «гостевой», и первый клиентский рендер
+  // должен совпасть с ним (иначе ошибка гидратации React #418)
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const hasToken = mounted && Boolean(tokens.get());
 
   const me = useQuery({
     queryKey: ['me'],
@@ -49,5 +53,5 @@ export function useAuth() {
     }
   }, [qc]);
 
-  return { user: me.data ?? null, loading: hasToken && me.isLoading, login, register, logout };
+  return { user: me.data ?? null, loading: !mounted || (hasToken && me.isLoading), login, register, logout };
 }

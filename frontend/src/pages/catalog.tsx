@@ -4,6 +4,9 @@ import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { Breadcrumbs, ChannelButtons, crumbs, ProductCard, useLiveProduct } from '../components/common';
 import { pages } from '../content/pages';
 import { catalog, categories, categoryBySlug, categoryUrl, minPrice, productBySlug, productsInCategory, productUrl, reviewsFor } from '../data/catalog';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { api } from '../lib/api';
+import { useAuth } from '../lib/auth';
 import { useCart } from '../lib/cart';
 import { LazyVideo, Picture, preloadSrcSet } from '../media';
 import { itemList, product as productLd } from '../seo/jsonld';
@@ -226,6 +229,7 @@ function ProductView({ staticProduct }: { staticProduct: Product }) {
                 </div>
               </>
             )}
+            <FavoriteButton productId={p.id} />
             <p className="muted">Или закажите удобным способом:</p>
             <ChannelButtons compact />
             {staticProduct.seo.text && <div className="seo-text"><p>{staticProduct.seo.text}</p></div>}
@@ -256,5 +260,27 @@ function ProductView({ staticProduct }: { staticProduct: Product }) {
         )}
       </div>
     </>
+  );
+}
+
+/** Избранное — только для вошедших покупателей; гостю кнопка не показывается. */
+function FavoriteButton({ productId }: { productId: number }) {
+  const { user } = useAuth();
+  const qc = useQueryClient();
+  const favs = useQuery({
+    queryKey: ['favorites'],
+    queryFn: () => api.get<{ data: { id: number }[] }>('/account/favorites').then((r) => r.data),
+    enabled: Boolean(user),
+  });
+  const isFav = (favs.data ?? []).some((f) => f.id === productId);
+  const toggle = useMutation({
+    mutationFn: () => (isFav ? api.delete(`/account/favorites/${productId}`) : api.post(`/account/favorites/${productId}`)),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['favorites'] }),
+  });
+  if (!user) return null;
+  return (
+    <button type="button" className="link" aria-pressed={isFav} disabled={toggle.isPending} onClick={() => toggle.mutate()}>
+      {isFav ? '♥ В избранном' : '♡ В избранное'}
+    </button>
   );
 }

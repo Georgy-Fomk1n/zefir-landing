@@ -3,23 +3,26 @@ import { Link } from 'react-router-dom';
 import { Breadcrumbs, ChannelButtons, crumbs, FaqList, Hours, LazyIframe, ProductCard } from '../components/common';
 import { pages, type PageKey } from '../content/pages';
 import { corporate, customOrder, faq, founder, gift, location, production, reviews } from '../content/texts';
-import { catalog, categoryUrl, productsInCategory } from '../data/catalog';
+import { catalog, categoryUrl, productsInCategory, seoOverride } from '../data/catalog';
 import { LazyVideo, Picture } from '../media';
 import { faqPage, organization } from '../seo/jsonld';
 import { Seo } from '../seo/Seo';
 
 function useContentPage(key: PageKey, extraLd: Record<string, unknown>[] = []) {
-  const meta = pages[key];
-  const bc = crumbs({ name: meta.label, path: meta.path });
+  const base = pages[key];
+  const o = seoOverride(base.path);
+  const meta = { ...base, title: o.title ?? base.title, description: o.description ?? base.description, h1: o.h1 ?? base.h1 };
+  const bc = crumbs({ name: base.label, path: base.path });
   const seo = (
-    <Seo title={meta.title} description={meta.description} path={meta.path} og={'og' in meta ? meta.og : undefined}
-      jsonLd={[bc.jsonLd, ...extraLd]} />
+    <Seo title={meta.title} description={meta.description} path={meta.path} og={'og' in base ? base.og : undefined}
+      noindex={o.noindex} jsonLd={[bc.jsonLd, ...extraLd]} />
   );
-  return { meta, seo, breadcrumbs: <Breadcrumbs items={bc.items} /> };
+  const seoText = o.text ? <div className="seo-text">{o.text.split('\n\n').map((t) => <p key={t}>{t}</p>)}</div> : null;
+  return { meta, seo, seoText, breadcrumbs: <Breadcrumbs items={bc.items} /> };
 }
 
 export function IndividualOrderPage() {
-  const { meta, seo, breadcrumbs } = useContentPage('individual');
+  const { meta, seo, seoText, breadcrumbs } = useContentPage('individual');
   return (
     <>
       {seo}
@@ -52,13 +55,14 @@ export function IndividualOrderPage() {
           <p><a href={`tel:${brand.phone}`} className="phone">{brand.phoneDisplay}</a></p>
           <ChannelButtons />
         </section>
+        {seoText}
       </div>
     </>
   );
 }
 
 export function CorporatePage() {
-  const { meta, seo, breadcrumbs } = useContentPage('corporate');
+  const { meta, seo, seoText, breadcrumbs } = useContentPage('corporate');
   return (
     <>
       {seo}
@@ -81,13 +85,14 @@ export function CorporatePage() {
           <h2>Наборы для мероприятий</h2>
           <div className="grid grid--2">{productsInCategory('nabory').map((p) => <ProductCard key={p.slug} product={p} />)}</div>
         </section>
+        {seoText}
       </div>
     </>
   );
 }
 
 export function FounderPage() {
-  const { meta, seo, breadcrumbs } = useContentPage('founder');
+  const { meta, seo, seoText, breadcrumbs } = useContentPage('founder');
   return (
     <>
       {seo}
@@ -103,13 +108,14 @@ export function FounderPage() {
             <p><Link to={pages.production.path}>Как мы делаем пирожные</Link> · <Link to="/catalog/">Каталог</Link></p>
           </div>
         </div>
+        {seoText}
       </div>
     </>
   );
 }
 
 export function ProductionPage() {
-  const { meta, seo, breadcrumbs } = useContentPage('production');
+  const { meta, seo, seoText, breadcrumbs } = useContentPage('production');
   return (
     <>
       {seo}
@@ -124,13 +130,14 @@ export function ProductionPage() {
           </ol>
         </div>
         <Picture name="banan-razrez" alt="Разрез корпусного пирожного: шоколадный корпус и начинка" sizes="100vw" />
+        {seoText}
       </div>
     </>
   );
 }
 
 export function ReviewsPage() {
-  const { meta, seo, breadcrumbs } = useContentPage('reviews');
+  const { meta, seo, seoText, breadcrumbs } = useContentPage('reviews');
   const siteReviews = catalog.reviews;
   return (
     <>
@@ -158,13 +165,14 @@ export function ReviewsPage() {
           <p><a href={yandex.orgUrl} target="_blank" rel="noopener">{reviews.mapLink}</a></p>
           <p><a href={yandex.reviewUrl} target="_blank" rel="noopener" className="btn btn-secondary">Оставить отзыв в Яндекс Картах</a></p>
         </section>
+        {seoText}
       </div>
     </>
   );
 }
 
 export function DeliveryPage() {
-  const { meta, seo, breadcrumbs } = useContentPage('delivery');
+  const { meta, seo, seoText, breadcrumbs } = useContentPage('delivery');
   const zones = catalog.deliveryZones;
   return (
     <>
@@ -215,13 +223,14 @@ export function DeliveryPage() {
           <h2>Сроки заказа</h2>
           <p>{faq[6].a}</p>
         </section>
+        {seoText}
       </div>
     </>
   );
 }
 
 export function ContactsPage() {
-  const { meta, seo, breadcrumbs } = useContentPage('contacts', [organization()]);
+  const { meta, seo, seoText, breadcrumbs } = useContentPage('contacts', [organization()]);
   return (
     <>
       {seo}
@@ -246,13 +255,14 @@ export function ContactsPage() {
             <Hours />
           </div>
         </div>
+        {seoText}
       </div>
     </>
   );
 }
 
 export function FaqPage() {
-  const { meta, seo, breadcrumbs } = useContentPage('faq', [faqPage(faq)]);
+  const { meta, seo, seoText, breadcrumbs } = useContentPage('faq', [faqPage(faq)]);
   return (
     <>
       {seo}
@@ -261,13 +271,14 @@ export function FaqPage() {
         <h1>{meta.h1}</h1>
         <FaqList items={faq} />
         <p className="more"><Link to={pages.delivery.path}>Доставка и оплата</Link> · <Link to={pages.contacts.path}>Контакты</Link></p>
+        {seoText}
       </div>
     </>
   );
 }
 
 export function LegalPage({ kind }: { kind: 'privacy' | 'offer' }) {
-  const { meta, seo, breadcrumbs } = useContentPage(kind);
+  const { meta, seo, seoText, breadcrumbs } = useContentPage(kind);
   return (
     <>
       {seo}
@@ -277,6 +288,7 @@ export function LegalPage({ kind }: { kind: 'privacy' | 'offer' }) {
         <p>{brand.legal.entity}, ОГРНИП {brand.legal.ogrnip}, ИНН {brand.legal.inn}.</p>
         {/* [УТОЧНИТЬ] юридический текст готовит владелец/юрист; шаблон не публикуется как оферта */}
         <p>Текст документа готовится. По вопросам обработки персональных данных: <a href={`tel:${brand.phone}`}>{brand.phoneDisplay}</a>.</p>
+        {seoText}
       </div>
     </>
   );

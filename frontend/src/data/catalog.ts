@@ -1,4 +1,4 @@
-import type { Category, Product, Review } from '@zefir/shared';
+import type { Category, Product, Review, Seo } from '@zefir/shared';
 import raw from './catalog.generated.json';
 
 export interface DeliveryZone {
@@ -20,6 +20,8 @@ interface BuildCatalog {
   products: Product[];
   deliveryZones: DeliveryZone[];
   reviews: (Review & { productSlug: string })[];
+  /** Переопределения SEO контентных страниц из админки (пустое поле — значение из кода) */
+  seoPages?: ({ path: string } & Seo)[];
 }
 
 // Снимок каталога на момент сборки. Живые цена и остаток уточняются запросом к API после гидратации.
@@ -66,4 +68,10 @@ export function catalogPaths(): string[] {
     ...categories.filter((c) => !c.seo.noindex).map((c) => categoryUrl(c.slug)),
     ...catalog.products.filter((p) => !p.seo.noindex).map(productUrl),
   ];
+}
+
+export function seoOverride(path: string): Partial<Seo> {
+  const o = catalog.seoPages?.find((p) => p.path === path);
+  if (!o) return {};
+  return Object.fromEntries(Object.entries(o).filter(([k, v]) => k !== 'path' && v !== null && v !== '')) as Partial<Seo>;
 }

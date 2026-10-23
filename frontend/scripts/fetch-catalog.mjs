@@ -57,6 +57,7 @@ export function fromSeed(seed, now = new Date().toISOString()) {
       updatedAt: now,
     })),
     deliveryZones: seed.delivery_zones ?? [],
+    seoPages: [],
     reviews: [],
   };
 }

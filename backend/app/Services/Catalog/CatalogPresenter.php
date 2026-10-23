@@ -7,6 +7,7 @@ use App\Models\DeliveryZone;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\Review;
+use App\Models\SeoPage;
 
 /**
  * Сериализация каталога в формат packages/shared/src/types.ts (Catalog, Product, Category).
@@ -74,6 +75,7 @@ class CatalogPresenter
                 'id' => $z->id, 'name' => $z->name, 'price' => $z->price, 'minOrder' => $z->min_order,
                 'freeFrom' => $z->free_from, 'etaText' => $z->etaText(),
             ])->all(),
+            'seoPages' => SeoPage::query()->get()->map(fn (SeoPage $p) => ['path' => $p->path] + $p->seoArray())->all(),
             'reviews' => Review::query()->where('status', 'approved')->with('product:id,slug')->latest()->limit(200)->get()->map(fn (Review $r) => [
                 'id' => $r->id, 'author' => $r->author_name, 'rating' => $r->rating, 'text' => $r->text,
                 'createdAt' => $r->created_at->toIso8601String(), 'productSlug' => $r->product->slug,
