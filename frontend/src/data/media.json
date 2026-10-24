@@ -1,0 +1,94 @@
+{
+  "images": {
+    "banan-razrez": {
+      "width": 3024,
+      "height": 4032,
+      "widths": [
+        400,
+        600,
+        800,
+        1200
+      ]
+    },
+    "banan": {
+      "width": 767,
+      "height": 1024,
+      "widths": [
+        400,
+        600
+      ]
+    },
+    "chernika": {
+      "width": 3024,
+      "height": 4032,
+      "widths": [
+        400,
+        600,
+        800,
+        1200
+      ]
+    },
+    "fistashka": {
+      "width": 1884,
+      "height": 2512,
+      "widths": [
+        400,
+        600,
+        800,
+        1200
+      ]
+    },
+    "kofeynye-zerna": {
+      "width": 3024,
+      "height": 4032,
+      "widths": [
+        400,
+        600,
+        800,
+        1200
+      ]
+    },
+    "krasolda": {
+      "width": 1202,
+      "height": 1280,
+      "widths": [
+        400,
+        600,
+        800,
+        1200
+      ]
+    },
+    "marakuyya": {
+      "width": 3024,
+      "height": 4032,
+      "widths": [
+        400,
+        600,
+        800,
+        1200
+      ]
+    }
+  },
+  "videos": {
+    "bento": {
+      "width": 720,
+      "height": 1280
+    },
+    "pp-banan": {
+      "width": 720,
+      "height": 1280
+    },
+    "pp-malina": {
+      "width": 720,
+      "height": 1280
+    },
+    "zastavka": {
+      "width": 720,
+      "height": 1280
+    }
+  },
+  "logo": {
+    "width": 516,
+    "height": 419
+  }
+}

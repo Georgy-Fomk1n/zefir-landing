@@ -1,0 +1,250 @@
+# Деплой по FTP на Sprinthost.
+#   develop → staging, main → production (Environment «production» с ручным подтверждением).
+#   repository_dispatch «catalog-updated» из админки → пересборка только публичного сайта.
+# Секреты и переменные — в GitHub Environments «staging» и «production» (docs/deploy.md).
+name: Deploy
+
+on:
+  push:
+    branches: [develop, main]
+  repository_dispatch:
+    types: [catalog-updated]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Окружение
+        type: choice
+        options: [staging, production]
+        required: true
+      only_frontend:
+        description: Только публичный сайт (пересборка статики)
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  plan:
+    name: План деплоя
+    runs-on: ubuntu-24.04
+    outputs:
+      environment: ${{ steps.p.outputs.environment }}
+      full: ${{ steps.p.outputs.full }}
+      paths: ${{ steps.p.outputs.paths }}
+    steps:
+      - id: p
+        env:
+          EVENT: ${{ github.event_name }}
+          REF: ${{ github.ref_name }}
+          INPUT_ENV: ${{ inputs.environment }}
+          INPUT_ONLY_FRONTEND: ${{ inputs.only_frontend }}
+          PAYLOAD_ENV: ${{ github.event.client_payload.environment }}
+          PAYLOAD_PATHS: ${{ toJson(github.event.client_payload.paths) }}
+        run: |
+          case "$EVENT" in
+            push) env=$([ "$REF" = main ] && echo production || echo staging); full=true; paths='[]' ;;
+            workflow_dispatch) env="$INPUT_ENV"; full=$([ "$INPUT_ONLY_FRONTEND" = true ] && echo false || echo true); paths='[]' ;;
+            repository_dispatch)
+              # APP_ENV бэкенда: production | staging; всё остальное — staging
+              env=$([ "$PAYLOAD_ENV" = production ] && echo production || echo staging); full=false
+              paths=$(echo "$PAYLOAD_PATHS" | jq -c 'if type == "array" then . else [] end') ;;
+          esac
+          echo "environment=$env" >> "$GITHUB_OUTPUT"
+          echo "full=$full" >> "$GITHUB_OUTPUT"
+          echo "paths=$paths" >> "$GITHUB_OUTPUT"
+          echo "### Деплой: $env (полный: $full)" >> "$GITHUB_STEP_SUMMARY"
+
+  checks:
+    name: Проверки
+    needs: plan
+    if: needs.plan.outputs.full == 'true'
+    uses: ./.github/workflows/ci.yml
+
+  # Ручное подтверждение деплоя кода в production: Environment «production-approval» с required reviewers.
+  # Пересборка статики из админки (repository_dispatch) подтверждения не требует — иначе каталог не обновится сам.
+  approve:
+    name: Подтверждение
+    needs: [plan, checks]
+    if: needs.plan.outputs.full == 'true'
+    runs-on: ubuntu-24.04
+    environment: ${{ needs.plan.outputs.environment == 'production' && 'production-approval' || 'staging' }}
+    steps:
+      - run: echo "Деплой ${{ needs.plan.outputs.environment }} подтверждён"
+
+  backend:
+    name: Backend → api
+    needs: [plan, approve]
+    if: needs.plan.outputs.full == 'true'
+    runs-on: ubuntu-24.04
+    environment: ${{ needs.plan.outputs.environment }}
+    concurrency: deploy-backend-${{ needs.plan.outputs.environment }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: mbstring, pdo_mysql, intl, openssl, gd
+          tools: composer:v2
+      - name: Зависимости без dev
+        working-directory: backend
+        run: composer install --no-dev --optimize-autoloader --no-interaction --no-progress --prefer-dist
+      - name: Релизный артефакт (для отката)
+        run: tar -czf backend-${{ github.sha }}.tgz --exclude=backend/tests --exclude=backend/.env --exclude='backend/storage/logs/*' backend
+      - uses: actions/upload-artifact@v4
+        with:
+          name: backend-release-${{ needs.plan.outputs.environment }}-${{ github.sha }}
+          path: backend-${{ github.sha }}.tgz
+          retention-days: 30
+      - name: FTP → api (инкрементально; .env на сервере не трогаем)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps
+          local-dir: ./backend/
+          server-dir: ${{ vars.FTP_API_DIR }}
+          state-name: .ftp-deploy-backend.json
+          exclude: |
+            **/.git*
+            **/.git*/**
+            .env
+            .env.*
+            tests/**
+            phpunit.xml
+            database/database.sqlite
+            storage/logs/**
+            storage/framework/cache/data/**
+            storage/framework/sessions/**
+            storage/framework/views/**
+            storage/app/private/**
+            bootstrap/cache/*.php
+      - name: Пост-деплой хук (миграции, кеши)
+        env:
+          API_URL: ${{ vars.API_URL }}
+          TOKEN: ${{ secrets.DEPLOY_HOOK_TOKEN }}
+          BASIC: ${{ secrets.STAGING_BASIC_AUTH }}
+        run: |
+          code=$(curl -sS -o hook.json -w '%{http_code}' -X POST "$API_URL/api/_deploy/run" \
+            -H "X-Deploy-Token: $TOKEN" -H "X-Release: ${GITHUB_SHA::7}" -H 'Accept: application/json' --max-time 180)
+          cat hook.json; echo
+          test "$code" = 200
+
+  frontend:
+    name: Публичный сайт → основной домен
+    needs: [plan, backend]
+    # После бэкенда (при полном деплое) или сразу (пересборка каталога)
+    if: always() && needs.plan.result == 'success' && (needs.plan.outputs.full == 'false' || needs.backend.result == 'success')
+    runs-on: ubuntu-24.04
+    environment: ${{ needs.plan.outputs.environment }}
+    # Пересборки из админки идут очередью, без параллельных загрузок
+    concurrency: deploy-frontend-${{ needs.plan.outputs.environment }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Сборка с пререндером (каталог из API окружения)
+        run: npm run build -w frontend
+        env:
+          CATALOG_API_URL: ${{ vars.API_URL }}
+          VITE_API_URL: ${{ vars.API_URL }}
+          VITE_APP_ENV: ${{ needs.plan.outputs.environment }}
+          VITE_METRIKA_ID: ${{ vars.METRIKA_ID }}
+          VITE_YANDEX_VERIFICATION: ${{ vars.YANDEX_VERIFICATION }}
+          VITE_GOOGLE_VERIFICATION: ${{ vars.GOOGLE_VERIFICATION }}
+          VITE_GA4_ID: ${{ vars.GA4_ID }}
+          INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
+          STAGING_HTPASSWD_PATH: ${{ vars.STAGING_HTPASSWD_PATH }}
+      - name: SEO-проверки production-сборки
+        if: needs.plan.outputs.environment == 'production'
+        run: npm run seo:check
+      - name: Релизный артефакт (для отката)
+        run: tar -czf frontend-${{ github.sha }}.tgz -C frontend dist
+      - uses: actions/upload-artifact@v4
+        with:
+          name: frontend-release-${{ needs.plan.outputs.environment }}-${{ github.run_id }}
+          path: frontend-${{ github.sha }}.tgz
+          retention-days: 30
+      - name: FTP → корень основного домена
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps
+          local-dir: ./frontend/dist/
+          server-dir: ${{ vars.FTP_PUBLIC_DIR }}
+          state-name: .ftp-deploy-frontend.json
+          # Удалённые из сборки страницы удаляются на сервере → настоящий 404
+          dangerous-clean-slate: false
+
+  staff:
+    name: Служебное приложение → штат
+    needs: [plan, backend]
+    if: needs.plan.outputs.full == 'true' && needs.backend.result == 'success'
+    runs-on: ubuntu-24.04
+    environment: ${{ needs.plan.outputs.environment }}
+    concurrency: deploy-staff-${{ needs.plan.outputs.environment }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build -w staff
+        env:
+          VITE_API_URL: ${{ vars.API_URL }}
+      - name: .htaccess служебного домена
+        env:
+          API_URL: ${{ vars.API_URL }}
+        run: sed "s#__API_ORIGIN__#${API_URL}#" deploy/htaccess/staff.htaccess > staff/dist/.htaccess
+      - uses: actions/upload-artifact@v4
+        with:
+          name: staff-release-${{ needs.plan.outputs.environment }}-${{ github.sha }}
+          path: staff/dist
+          include-hidden-files: true
+          retention-days: 30
+      - name: FTP → корень штат-домена (отдельный FTP-аккаунт)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_STAFF_USERNAME }}
+          password: ${{ secrets.FTP_STAFF_PASSWORD }}
+          protocol: ftps
+          local-dir: ./staff/dist/
+          server-dir: ${{ vars.FTP_STAFF_DIR }}
+          state-name: .ftp-deploy-staff.json
+
+  smoke:
+    name: Smoke-тесты и IndexNow
+    needs: [plan, frontend, staff]
+    if: always() && needs.frontend.result == 'success' && (needs.staff.result == 'success' || needs.staff.result == 'skipped')
+    runs-on: ubuntu-24.04
+    environment: ${{ needs.plan.outputs.environment }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: Smoke
+        run: node scripts/smoke.mjs
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
+          STAFF_URL: ${{ vars.STAFF_URL }}
+          API_URL: ${{ vars.API_URL }}
+          BASIC_AUTH: ${{ secrets.STAGING_BASIC_AUTH }}
+          EXPECT_ENV: ${{ needs.plan.outputs.environment }}
+      - name: IndexNow (только production)
+        if: needs.plan.outputs.environment == 'production'
+        run: node scripts/indexnow.mjs
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
+          INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
+          CHANGED_PATHS: ${{ needs.plan.outputs.paths }}
