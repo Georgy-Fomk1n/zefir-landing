@@ -65,7 +65,7 @@ p { line-height: 1.7; }
 .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 .btn-secondary { background: var(--glass-bg); color: var(--deep-accent); border-color: var(--magenta); }
 .btn-secondary:hover { background: var(--magenta); color: var(--white); }
-.btn-sm { padding: 8px 18px; font-size: 0.9rem; min-height: 40px; }
+.btn-sm { padding: 8px 18px; font-size: 0.9rem; min-height: 44px; }
 .btn-row { display: flex; flex-wrap: wrap; gap: 12px; margin: 16px 0; }
 .btn-row--center { justify-content: center; }
 .link { background: none; border: 0; color: var(--deep-accent); text-decoration: underline; cursor: pointer; }

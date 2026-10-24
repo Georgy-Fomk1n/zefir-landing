@@ -59,7 +59,17 @@ REBUILD_ENABLED=true
 GITHUB_DISPATCH_TOKEN=…     # fine-grained PAT: только этот репозиторий, Contents: read & write
 INDEXNOW_ENABLED=true
 INDEXNOW_KEY=…              # тот же, что секрет INDEXNOW_KEY
+VAPID_PUBLIC_KEY=…          # Web Push: php artisan push:vapid (локально), см. ниже
+VAPID_PRIVATE_KEY=…
+VAPID_SUBJECT=mailto:…      # контакт для push-сервисов
+NOTIFY_CHANNELS=mail,push
 ```
+
+**Push-уведомления.** Ключи VAPID генерируются один раз локально командой `php artisan push:vapid` и вписываются
+в `.env` production (у staging — свои). Если ключи сменить, все подписки перестанут работать и покупателям придётся
+включить уведомления заново. Без ключей кнопка «Включить уведомления» не появляется, остальное работает.
+На iPhone push приходят только в веб-приложении, добавленном на экран «Домой» (iOS 16.4+); во вкладке Safari
+покупатель и курьер видят инструкцию, как установить.
 
 На staging: `APP_ENV=staging`, свои хосты в CORS и `*_URL`, `PAYMENT_PROVIDER=fake` допустим.
 `PAYMENT_PROVIDER=fake` при `APP_ENV=production` приложение не запустит — это защита.

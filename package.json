@@ -12,13 +12,15 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "typecheck": "npm run typecheck --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present && tsc -p e2e",
     "test": "npm run test --workspaces --if-present",
     "build": "npm run build -w frontend && npm run build -w staff",
-    "seo:check": "npm run seo:check -w frontend"
+    "seo:check": "npm run seo:check -w frontend",
+    "e2e": "playwright test -c e2e/playwright.config.ts"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
+    "@playwright/test": "1.63.0",
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",
     "globals": "^16.5.0",

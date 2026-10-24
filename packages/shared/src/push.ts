@@ -40,12 +40,13 @@ export function iosVersion(userAgent: string): number | null {
 }
 
 export function pushSupport(env: Env = readEnv()): PushSupport {
-  if (env.permission === 'denied') return 'denied';
+  // На iPhone сначала версия и установка: во вкладке Safari разрешения нет вовсе, и подсказка «запрещено» сбила бы с толку
   if (isIos(env)) {
     const v = iosVersion(env.userAgent);
     if (v !== null && v < 16.4) return 'ios-too-old';
     if (!env.standalone) return 'ios-install';
   }
+  if (env.permission === 'denied') return 'denied';
   return env.hasServiceWorker && env.hasPushManager && env.hasNotification ? 'supported' : 'unsupported';
 }
 

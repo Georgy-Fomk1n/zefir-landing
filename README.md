@@ -46,10 +46,12 @@ npm run build -w frontend && npm run preview -w frontend   # пререндер 
 ## Проверки
 
 ```bash
-npm run lint && npm run typecheck && npm test                 # ESLint, tsc, Vitest (frontend, staff)
+npm run lint && npm run typecheck && npm test                 # ESLint, tsc, Vitest (frontend, staff, shared)
+npm run test:coverage -w frontend && npm run test:coverage -w staff      # то же с порогами покрытия
+npm run e2e                                                   # Playwright: магазин, штат, iPhone, push (48 сценариев)
 VITE_APP_ENV=production npm run build -w frontend && npm run seo:check   # SEO-проверки пререндера
 npx @lhci/cli@0.15.1 autorun                                  # Lighthouse CI (пороги из lighthouserc.json)
-cd backend && vendor/bin/pint --test && vendor/bin/pest       # Pint, 62 теста Pest
+cd backend && vendor/bin/pint --test && vendor/bin/pest       # Pint, 125 тестов Pest
 php artisan api:openapi                                       # docs/openapi.json из маршрутов
 ```
 
@@ -63,4 +65,5 @@ php artisan api:openapi                                       # docs/openapi.jso
 - [Оплата Точка Банк](docs/payments.md)
 - [API (OpenAPI)](docs/openapi.json)
 - [Lighthouse и SEO-проверки](docs/lighthouse.md)
+- [Автотесты: уровни, пороги покрытия, E2E](docs/testing.md)
 - [Список [УТОЧНИТЬ] и допущений](docs/assumptions.md)

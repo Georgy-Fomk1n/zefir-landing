@@ -102,6 +102,8 @@ describe('push: поддержка устройств', () => {
     expect(pushSupport(env({ userAgent: IPHONE_17, standalone: true }))).toBe('supported');
     expect(pushSupport(env({ userAgent: IPHONE_15, standalone: true }))).toBe('ios-too-old');
     expect(pushSupport(env({ userAgent: IPAD_OS, standalone: false }))).toBe('ios-install');
+    expect(pushSupport(env({ userAgent: IPHONE_17, permission: 'denied' }))).toBe('ios-install');
+    expect(pushSupport(env({ userAgent: IPHONE_17, standalone: true, permission: 'denied' }))).toBe('denied');
   });
 
   it('учитывает запрет и отсутствие API', () => {

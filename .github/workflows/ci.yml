@@ -43,7 +43,7 @@ jobs:
           # Версия PHP на хостинге Sprinthost
           php-version: '8.5'
           extensions: mbstring, pdo_mysql, intl, openssl, gd
-          coverage: none
+          coverage: pcov
           tools: composer:v2
       - uses: actions/cache@v4
         with:
@@ -53,7 +53,10 @@ jobs:
       - run: cp .env.example .env && php artisan key:generate
       - run: vendor/bin/pint --test
       - run: php artisan migrate --force
-      - run: vendor/bin/pest --parallel
+      - name: Pest с покрытием (порог 90 % строк)
+        run: |
+          vendor/bin/pest --parallel --coverage-clover build/clover.xml
+          php scripts/coverage-check.php build/clover.xml 90
 
   frontend:
     name: Frontend и служебное приложение (ESLint, tsc, Vitest, сборка)
@@ -70,7 +73,10 @@ jobs:
       - run: npm run catalog -w frontend
       - run: npm run lint
       - run: npm run typecheck
-      - run: npm test
+      - name: Vitest с порогами покрытия (магазин, общий пакет, штат)
+        run: |
+          npm run test:coverage -w frontend
+          npm run test:coverage -w staff
       - name: Сборка staff
         run: npm run build -w staff
       - name: Production-сборка публичного сайта с пререндером (каталог из seed)
@@ -115,4 +121,53 @@ jobs:
         with:
           name: lighthouse-report
           path: .lighthouseci
+          retention-days: 14
+
+  e2e:
+    name: E2E Playwright (${{ matrix.engine }})
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Chromium: десктоп, push, профили iPhone с эмуляцией
+          - engine: chromium
+            projects: --project=desktop --project=iphone-13 --project=iphone-se
+            webkit: ''
+          # Настоящий WebKit (движок Safari) для профилей iPhone
+          - engine: webkit
+            projects: --project=iphone-13 --project=iphone-se
+            webkit: '1'
+    steps:
+      - uses: actions/checkout@v5
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: mbstring, pdo_sqlite, intl, openssl, gd
+          coverage: none
+          tools: composer:v2
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/composer
+          key: composer-${{ hashFiles('backend/composer.lock') }}
+      - run: composer install --no-interaction --no-progress --prefer-dist
+        working-directory: backend
+      - run: npm ci
+      - run: npm run catalog -w frontend
+      - run: npx playwright install --with-deps ${{ matrix.engine }}
+      - name: Playwright (API на SQLite, пререндер магазина, служебное SPA)
+        run: npm run e2e -- ${{ matrix.projects }}
+        env:
+          E2E_WEBKIT: ${{ matrix.webkit }}
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: e2e-report-${{ matrix.engine }}
+          path: |
+            e2e/report
+            e2e/test-results
           retention-days: 14
