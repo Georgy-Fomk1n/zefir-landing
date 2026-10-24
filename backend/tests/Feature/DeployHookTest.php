@@ -4,6 +4,7 @@ use App\Enums\Role;
 use App\Models\Product;
 use App\Models\User;
 use App\Services\Deploy\Bootstrapper;
+use Illuminate\Support\Facades\Artisan;
 
 it('выключенный хук отдаёт 404', function () {
     config(['shop.deploy_hook.enabled' => false, 'shop.deploy_hook.token' => 'secret']);
@@ -11,12 +12,19 @@ it('выключенный хук отдаёт 404', function () {
 });
 
 it('проверяет токен и IP, выполняет миграции и кеширование', function () {
+    // Команды подменяем: настоящие down и *:cache пишут в общие storage/ и bootstrap/cache/
+    // и ломают соседние процессы при pest --parallel (режим обслуживания отдаёт им 503)
+    $calls = [];
+    Artisan::shouldReceive('call')->andReturnUsing(function (string $cmd) use (&$calls) {
+        $calls[] = $cmd;
+
+        return 0;
+    });
     config(['shop.deploy_hook.enabled' => true, 'shop.deploy_hook.token' => 'secret', 'shop.deploy_hook.allowed_ips' => []]);
     $this->postJson('/api/_deploy/run', [], ['X-Deploy-Token' => 'wrong'])->assertNotFound();
+    expect($calls)->toBe([]);
     $this->postJson('/api/_deploy/run', [], ['X-Deploy-Token' => 'secret'])->assertOk()->assertExactJson(['ok' => true]);
-    $this->artisan('config:clear');
-    $this->artisan('route:clear');
-    $this->artisan('event:clear');
+    expect($calls)->toBe(['down', 'migrate', 'config:cache', 'route:cache', 'view:cache', 'event:cache', 'up']);
 
     config(['shop.deploy_hook.allowed_ips' => ['10.0.0.1']]);
     $this->postJson('/api/_deploy/run', [], ['X-Deploy-Token' => 'secret'])->assertNotFound();
