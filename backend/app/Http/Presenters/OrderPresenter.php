@@ -46,12 +46,13 @@ class OrderPresenter
             ] : null,
             'history' => $o->history->map($event)->all(),
             'trackingUrl' => $public ? null : $o->trackingUrl(),
+            'trackingToken' => $public ? null : $o->tracking_token,
             'externalTracking' => $o->external_tracking,
             'createdAt' => $o->created_at->toIso8601String(),
         ];
         if ($public) {
             // Публичное отслеживание: без состава, сумм и персональных данных
-            return array_intersect_key($data, array_flip(['number', 'status', 'fulfilment', 'slot', 'delivery', 'history', 'externalTracking']));
+            return array_intersect_key($data, array_flip(['number', 'status', 'paymentStatus', 'fulfilment', 'slot', 'delivery', 'history', 'externalTracking']));
         }
 
         return $data;

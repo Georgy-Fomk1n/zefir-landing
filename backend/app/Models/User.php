@@ -20,6 +20,9 @@ class User extends Authenticatable
 
     protected $hidden = ['password', 'remember_token', 'two_factor_secret'];
 
+    /** Значения по умолчанию совпадают с БД: без них у только что созданной модели is_active === null */
+    protected $attributes = ['is_active' => true, 'marketing_consent' => false];
+
     /** @var list<string>|null */
     private ?array $roleCache = null;
 

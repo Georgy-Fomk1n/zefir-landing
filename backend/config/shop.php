@@ -90,9 +90,16 @@ return [
         'dadata_token' => env('DADATA_TOKEN'),
     ],
 
-    // [УТОЧНИТЬ] каналы уведомлений клиентов: mail, telegram, sms
+    // Web Push (VAPID). Ключи: php artisan push:vapid. Субъект — контакт для push-сервисов.
+    'push' => [
+        'public_key' => env('VAPID_PUBLIC_KEY'),
+        'private_key' => env('VAPID_PRIVATE_KEY'),
+        'subject' => env('VAPID_SUBJECT', 'mailto:noreply@xn-----mlchgbbqzthe9b5k.xn--p1ai'),
+    ],
+
+    // [УТОЧНИТЬ] каналы уведомлений клиентов: mail, push, telegram, sms
     'notifications' => [
-        'channels' => array_filter(explode(',', env('NOTIFY_CHANNELS', 'mail'))),
+        'channels' => array_filter(explode(',', env('NOTIFY_CHANNELS', 'mail,push'))),
         'telegram_bot_token' => env('TELEGRAM_BOT_TOKEN'),
         'sms_provider' => env('SMS_PROVIDER', 'log'),
     ],

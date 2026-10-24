@@ -15,6 +15,6 @@ class SmsChannel
         if (! $phone || ! method_exists($notification, 'toText')) {
             return;
         }
-        Log::channel('stack')->info('sms', ['to' => $phone, 'text' => $notification->toText($notifiable)]);
+        Log::info('sms', ['to' => $phone, 'text' => $notification->toText($notifiable)]);
     }
 }

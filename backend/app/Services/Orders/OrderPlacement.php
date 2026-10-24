@@ -95,8 +95,22 @@ class OrderPlacement
             return $order;
         });
 
+        return $this->startPayment($order);
+    }
+
+    /**
+     * Ссылка на оплату заказа. Используется при оформлении и для повторной попытки после отказа банка
+     * (пока заказ ждёт оплаты и резерв не истёк).
+     *
+     * @return array{order: Order, payment: ?Payment, url: string}
+     */
+    public function startPayment(Order $order): array
+    {
+        if ($order->status !== OrderStatus::PendingPayment || ($order->reserved_until && $order->reserved_until->isPast())) {
+            throw ValidationException::withMessages(['order' => 'Заказ уже нельзя оплатить']);
+        }
         $base = rtrim(config('shop.public_url'), '/');
-        $back = $user ? "{$base}/account/orders/{$order->id}" : "{$base}/track/?t={$order->tracking_token}";
+        $back = $order->user_id ? "{$base}/account/orders/{$order->id}" : "{$base}/track/?t={$order->tracking_token}";
         $success = $back.(str_contains($back, '?') ? '&' : '?').'paid=1';
         if ($order->total <= 0) {
             // Полностью покрыт промокодом: оплата не нужна

@@ -7,6 +7,7 @@ use App\Services\Loyalty\LoyaltyService;
 use App\Services\Orders\OrderLifecycle;
 use App\Services\Orders\SlotService;
 use App\Services\Payments\PaymentService;
+use App\Services\Push\WebPush;
 use App\Services\Subscriptions\SubscriptionService;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Artisan;
@@ -127,6 +128,14 @@ Artisan::command('api:openapi {--output=../docs/openapi.json}', function () {
         'components' => ['securitySchemes' => ['bearer' => ['type' => 'http', 'scheme' => 'bearer', 'description' => 'Sanctum API token']]],
         'paths' => $paths,
     ];
-    file_put_contents(base_path($this->option('output')), json_encode($doc, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)."\n");
+    $output = $this->option('output');
+    file_put_contents(str_starts_with($output, '/') ? $output : base_path($output), json_encode($doc, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)."\n");
     $this->info('OpenAPI: '.count($paths).' путей');
 })->purpose('Сгенерировать docs/openapi.json из маршрутов');
+
+Artisan::command('push:vapid', function () {
+    $keys = WebPush::createVapidKeys();
+    $this->line('Добавьте в .env (одинаково на всех серверах окружения, при смене ключей подписки придётся оформить заново):');
+    $this->line('VAPID_PUBLIC_KEY='.$keys['publicKey']);
+    $this->line('VAPID_PRIVATE_KEY='.$keys['privateKey']);
+})->purpose('Сгенерировать ключи VAPID для Web Push');

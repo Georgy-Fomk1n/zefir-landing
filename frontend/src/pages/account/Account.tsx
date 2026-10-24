@@ -6,7 +6,8 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { Link, NavLink, Route, Routes, useNavigate, useParams } from 'react-router-dom';
 import { pages } from '../../content/pages';
 import { productBySlug } from '../../data/catalog';
-import { api } from '../../lib/api';
+import { PushToggle } from '@zefir/shared/ui';
+import { api, customerPushApi } from '../../lib/api';
 import { useAuth } from '../../lib/auth';
 import { reachGoal } from '../../lib/metrika';
 import { Seo } from '../../seo/Seo';
@@ -264,6 +265,8 @@ function Settings() {
         <button type="submit" className="btn btn-primary btn-sm">Изменить</button>
         {password.error && <p className="error">{formError(password.error)}</p>}
       </form>
+      <PushToggle className="form" api={customerPushApi}
+        description="Push-уведомления о статусе заказов: оплачен, готов, курьер в пути, доставлен." />
       <div>
         <h3>Сохранённые карты</h3>
         {(methods.data ?? []).length === 0 && <p className="muted">Нет сохранённых карт.</p>}

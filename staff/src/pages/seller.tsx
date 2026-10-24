@@ -2,7 +2,8 @@ import { deliveryStatusLabels, fulfilmentLabels, orderStatusLabels, type Deliver
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 import { NavLink, Route, Routes } from 'react-router-dom';
-import { api } from '../lib/api';
+import { PushToggle } from '@zefir/shared/ui';
+import { api, staffPushApi } from '../lib/api';
 import { errorText, rub, Section } from '../lib/ui';
 
 type StaffOrder = Order & {
@@ -274,6 +275,7 @@ export default function Seller() {
         <NavLink to="/seller/deliveries">Доставки</NavLink>
       </nav>
       <main className="content">
+        <PushToggle className="card" api={staffPushApi} description="Уведомления о новых оплаченных заказах." />
         <Routes>
           <Route index element={<Queue />} />
           <Route path="scan" element={<Scan />} />

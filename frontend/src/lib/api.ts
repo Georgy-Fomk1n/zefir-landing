@@ -8,3 +8,10 @@ import { config } from '../config';
 export const tokens = storageTokenStore('zp_token', () => (typeof window === 'undefined' ? undefined : window.localStorage));
 
 export const api = createApiClient({ baseUrl: config.apiUrl, tokens });
+
+/** Web Push покупателя: подписка хранится в области customer */
+export const customerPushApi = {
+  publicKey: () => api.get<{ publicKey: string | null }>('/push/key').then((r) => r.publicKey),
+  save: (subscription: PushSubscriptionJSON) => api.post('/account/push', subscription),
+  remove: (endpoint: string) => api.delete(`/account/push?endpoint=${encodeURIComponent(endpoint)}`),
+};

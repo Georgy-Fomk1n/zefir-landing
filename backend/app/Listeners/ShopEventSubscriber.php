@@ -5,15 +5,20 @@ namespace App\Listeners;
 use App\Enums\DeliveryStatus;
 use App\Enums\Fulfilment;
 use App\Enums\OrderStatus;
+use App\Enums\Role;
 use App\Events\CatalogChanged;
 use App\Events\DeliveryStatusChanged;
 use App\Events\OrderStatusChanged;
 use App\Models\Order;
+use App\Models\User;
+use App\Notifications\DeliveryAssigned;
+use App\Notifications\NewOrderForStaff;
 use App\Notifications\OrderStatusNotification;
 use App\Services\Catalog\StaticRebuild;
 use App\Services\Delivery\DeliveryProviders;
 use App\Services\Loyalty\LoyaltyService;
 use Illuminate\Events\Dispatcher;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 
 class ShopEventSubscriber
@@ -29,6 +34,10 @@ class ShopEventSubscriber
         $order = $e->order;
         if ($e->status === OrderStatus::Completed) {
             $this->loyalty->awardForOrder($order);
+        }
+        if ($e->status === OrderStatus::Paid) {
+            $staffIds = DB::table('user_roles')->whereIn('role', [Role::Seller->value, Role::Admin->value])->pluck('user_id');
+            Notification::send(User::query()->whereIn('id', $staffIds)->where('is_active', true)->get(), new NewOrderForStaff($order));
         }
         // Отправление СДЭК/Почтой создаётся, когда заказ готов
         if ($e->status === OrderStatus::Shipped && in_array($order->fulfilment, [Fulfilment::Cdek, Fulfilment::RussianPost], true) && ! $order->external_tracking) {
@@ -50,6 +59,9 @@ class ShopEventSubscriber
 
     public function onDeliveryStatus(DeliveryStatusChanged $e): void
     {
+        if ($e->status === DeliveryStatus::Assigned && $e->delivery->courier) {
+            $e->delivery->courier->notify(new DeliveryAssigned($e->delivery));
+        }
         $headline = match ($e->status) {
             DeliveryStatus::InTransit => 'курьер в пути',
             DeliveryStatus::Failed => 'курьеру не удалось вручить заказ, мы свяжемся с вами',

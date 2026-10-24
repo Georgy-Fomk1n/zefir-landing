@@ -50,4 +50,12 @@ class CheckoutController extends Controller
 
         return response()->json(['data' => OrderPresenter::make($order, null, public: true)]);
     }
+
+    /** Повторная попытка оплаты по ссылке отслеживания (после отказа банка или закрытой страницы оплаты) */
+    public function pay(string $token, OrderPlacement $placement): JsonResponse
+    {
+        $order = Order::query()->where('tracking_token', $token)->firstOrFail();
+
+        return response()->json(['payment' => ['url' => $placement->startPayment($order)['url']]]);
+    }
 }

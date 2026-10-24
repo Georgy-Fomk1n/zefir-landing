@@ -1,6 +1,6 @@
 // Service worker панели курьера: оболочка приложения доступна без сети.
 // API не кешируется (данные заказов не должны оседать в кеше устройства); действия копит офлайн-очередь в приложении.
-const CACHE = 'staff-shell-v1';
+const CACHE = 'staff-shell-v2';
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE).then((c) => c.addAll(['/', '/manifest.webmanifest', '/icon-192.png'])));
@@ -27,4 +27,32 @@ self.addEventListener('fetch', (event) => {
       return res;
     })));
   }
+});
+
+// Push: новые заказы (продавец) и назначенные доставки (курьер)
+self.addEventListener('push', (event) => {
+  let data = {};
+  try {
+    data = event.data ? event.data.json() : {};
+  } catch {
+    data = { body: event.data ? event.data.text() : '' };
+  }
+  event.waitUntil(self.registration.showNotification(data.title || 'Зефир и пряник · штат', {
+    body: data.body || '',
+    tag: data.tag || 'staff',
+    icon: '/icon-192.png',
+    badge: '/icon-192.png',
+    requireInteraction: true,
+    data: { url: data.url || '/' },
+  }));
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const url = new URL((event.notification.data && event.notification.data.url) || '/', self.location.origin);
+  event.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((list) => {
+    const client = list.find((c) => new URL(c.url).origin === url.origin);
+    if (client) return client.navigate(url.pathname).then((c) => c && c.focus());
+    return self.clients.openWindow(url.pathname);
+  }));
 });

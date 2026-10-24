@@ -6,6 +6,7 @@ use App\Enums\DeliveryStatus;
 use App\Enums\Fulfilment;
 use App\Enums\OrderStatus;
 use App\Enums\Role;
+use App\Events\DeliveryStatusChanged;
 use App\Models\CourierShift;
 use App\Models\Delivery;
 use App\Models\Order;
@@ -50,6 +51,8 @@ class DeliveryService
             } else {
                 $delivery->history()->create(['from' => null, 'to' => DeliveryStatus::Assigned->value, 'user_id' => $by->id,
                     'comment' => ($reassign ? 'Переназначен: ' : 'Назначен: ').$courier->name, 'happened_at' => now()]);
+                // Уведомление курьеру (push) — то же событие, что и при смене статуса
+                event(new DeliveryStatusChanged($delivery->fresh(), DeliveryStatus::Assigned));
             }
             if ($order->status === OrderStatus::Ready) {
                 $order->transitionTo(OrderStatus::HandedToCourier, $by, 'Передан курьеру '.$courier->name);

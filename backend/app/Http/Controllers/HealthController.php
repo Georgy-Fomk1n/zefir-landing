@@ -13,10 +13,11 @@ class HealthController extends Controller
         try {
             DB::select('select 1');
             $db = true;
+            $queueLag = DB::table('jobs')->min('available_at');
         } catch (Throwable) {
             $db = false;
+            $queueLag = null;
         }
-        $queueLag = DB::table('jobs')->min('available_at');
 
         return response()->json([
             'status' => $db ? 'ok' : 'degraded',

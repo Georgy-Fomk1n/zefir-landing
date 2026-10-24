@@ -45,3 +45,10 @@ export const api = createApiClient({
     if (!window.location.pathname.startsWith('/login')) window.location.assign(`/login?next=${encodeURIComponent(window.location.pathname)}`);
   },
 });
+
+/** Web Push сотрудника: новые заказы (продавец), назначенные доставки (курьер) */
+export const staffPushApi = {
+  publicKey: () => api.get<{ publicKey: string | null }>('/push/key').then((r) => r.publicKey),
+  save: (subscription: PushSubscriptionJSON) => api.post('/staff/push', subscription),
+  remove: (endpoint: string) => api.delete(`/staff/push?endpoint=${encodeURIComponent(endpoint)}`),
+};

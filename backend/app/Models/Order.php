@@ -6,6 +6,7 @@ use App\Enums\Fulfilment;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentStatus;
 use App\Events\OrderStatusChanged;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -15,6 +16,8 @@ use Illuminate\Support\Facades\DB;
 
 class Order extends Model
 {
+    use HasFactory;
+
     protected $fillable = ['number', 'user_id', 'status', 'fulfilment', 'contact_name', 'contact_phone', 'contact_email', 'address',
         'slot_id', 'zone_id', 'promo_code_id', 'subtotal', 'discount', 'points_spent', 'delivery_cost', 'total', 'payment_status',
         'comment', 'reserved_until', 'tracking_token', 'external_tracking', 'loyalty_awarded_at'];

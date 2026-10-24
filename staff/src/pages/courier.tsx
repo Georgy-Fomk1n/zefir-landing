@@ -1,7 +1,8 @@
 import { deliveryStatusLabels, type DeliveryStatus } from '@zefir/shared';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useState } from 'react';
-import { api } from '../lib/api';
+import { PushToggle } from '@zefir/shared/ui';
+import { api, staffPushApi } from '../lib/api';
 import { currentPosition, enqueue, flushQueue, newActionId, readQueue, toFormData, type QueuedAction } from '../lib/offlineQueue';
 import { rub } from '../lib/ui';
 
@@ -137,6 +138,8 @@ export default function Courier() {
         ) : <button type="button" className="btn" onClick={() => shift(true)}>Начать смену</button>}
       </div>
       {summary && <p className="ok">Итог смены: доставлено {summary.delivered}, не вручено {summary.failed}{data?.cashOnDelivery ? `, наличные ${rub(Number(summary.cash))}, карта ${rub(Number(summary.card))}` : ''}</p>}
+
+      <PushToggle className="push" api={staffPushApi} description="Уведомления о новых доставках." />
 
       <h1>На сегодня · {active.length}</h1>
       {today.isLoading && <p className="muted">Загрузка…</p>}

@@ -11,6 +11,7 @@ use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\DeployHookController;
 use App\Http\Controllers\HealthController;
+use App\Http\Controllers\PushController;
 use App\Http\Controllers\Staff\Admin\AdminController;
 use App\Http\Controllers\Staff\Admin\CatalogAdminController;
 use App\Http\Controllers\Staff\Courier\CourierController;
@@ -30,12 +31,14 @@ Route::prefix('catalog')->group(function () {
     Route::get('products', [CatalogController::class, 'products']);
     Route::get('products/{slug}', [CatalogController::class, 'product']);
 });
+Route::get('push/key', [PushController::class, 'key']);
 Route::get('subscription-plans', [SubscriptionController::class, 'plans']);
 Route::get('slots', [CheckoutController::class, 'slots']);
 Route::get('geo/suggest', [CheckoutController::class, 'suggest'])->middleware('throttle:geo');
 Route::post('cart/quote', [CartController::class, 'quote']);
 Route::post('orders', [CheckoutController::class, 'place'])->middleware('throttle:checkout');
 Route::get('track/{token}', [CheckoutController::class, 'track'])->where('token', '[A-Za-z0-9]{20,64}');
+Route::post('track/{token}/pay', [CheckoutController::class, 'pay'])->where('token', '[A-Za-z0-9]{20,64}')->middleware('throttle:checkout');
 
 Route::post('webhooks/payments', PaymentWebhookController::class)->middleware('throttle:webhooks');
 Route::get('payments/fake/{payment}', [PaymentWebhookController::class, 'fake'])->name('payments.fake');
@@ -69,6 +72,9 @@ Route::middleware(['auth:sanctum', 'abilities:customer'])->group(function () {
 
         Route::get('loyalty', [LoyaltyController::class, 'show']);
 
+        Route::post('push', [PushController::class, 'store']);
+        Route::delete('push', [PushController::class, 'destroy']);
+
         Route::get('subscriptions', [SubscriptionController::class, 'index']);
         Route::post('subscriptions', [SubscriptionController::class, 'store']);
         Route::post('subscriptions/{subscription}/cancel', [SubscriptionController::class, 'cancel']);
@@ -84,6 +90,8 @@ Route::prefix('staff')->group(function () {
     Route::middleware(['auth:sanctum', 'abilities:staff'])->group(function () {
         Route::get('auth/me', [StaffAuthController::class, 'me']);
         Route::post('auth/logout', [StaffAuthController::class, 'logout']);
+        Route::post('push', [PushController::class, 'store']);
+        Route::delete('push', [PushController::class, 'destroy']);
 
         Route::middleware('role:seller,admin')->prefix('seller')->group(function () {
             Route::get('queue', [SellerController::class, 'queue']);
