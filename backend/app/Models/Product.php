@@ -53,12 +53,13 @@ class Product extends Model
     /** Поиск: MySQL FULLTEXT (boolean mode), на других драйверах — LIKE (тесты на SQLite). */
     public function scopeSearch(Builder $q, string $term): Builder
     {
-        $term = trim($term);
-        if ($term === '') {
+        // Только буквы, цифры и дефис: операторы boolean mode и символы LIKE не должны попасть в запрос
+        $words = preg_split('/\s+/u', preg_replace('/[^\p{L}\p{N}\s-]/u', ' ', $term), -1, PREG_SPLIT_NO_EMPTY);
+        if ($words === []) {
             return $q;
         }
+        $term = implode(' ', $words);
         if ($q->getConnection()->getDriverName() === 'mysql') {
-            $words = preg_split('/\s+/u', preg_replace('/[^\p{L}\p{N}\s-]/u', ' ', $term), -1, PREG_SPLIT_NO_EMPTY);
             $boolean = implode(' ', array_map(fn ($w) => '+'.$w.'*', $words));
 
             return $q->whereFullText(['name', 'description'], $boolean, ['mode' => 'boolean']);

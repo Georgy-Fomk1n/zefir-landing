@@ -32,11 +32,10 @@ function orderPayload(array $over = []): array
     ], $over);
 }
 
-it('экспортирует каталог для пререндера и ищет товары', function () {
+it('экспортирует каталог для пререндера, фильтрует и сортирует', function () {
     $this->getJson('/api/catalog/export')->assertOk()
         ->assertJsonCount(5, 'categories')->assertJsonCount(8, 'products')
         ->assertJsonPath('products.0.variants.0.price', 45000);
-    $this->getJson('/api/catalog/products?q=фисташ')->assertOk()->assertJsonPath('data.0.slug', 'fistashka');
     $this->getJson('/api/catalog/products?category=pp-bez-sahara&sort=price_asc')->assertOk()->assertJsonPath('data.0.slug', 'pp-banan');
     $this->getJson('/api/catalog/products/nope')->assertNotFound();
 });

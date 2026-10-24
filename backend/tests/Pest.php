@@ -4,10 +4,14 @@ use App\Enums\Role;
 use App\Models\User;
 use App\Services\Auth\TokenIssuer;
 use Database\Seeders\CatalogSeeder;
+use Illuminate\Foundation\Testing\DatabaseTruncation;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 pest()->extend(TestCase::class)->use(RefreshDatabase::class)->in('Feature', 'Unit');
+// Поиск на MySQL идёт через FULLTEXT, который не видит незакоммиченных строк, — там данные коммитятся и чистятся
+$searchDb = (getenv('DB_CONNECTION') ?: ($_SERVER['DB_CONNECTION'] ?? 'sqlite')) === 'mysql' ? DatabaseTruncation::class : RefreshDatabase::class;
+pest()->extend(TestCase::class)->use($searchDb)->in('Search');
 
 function makeUser(Role ...$roles): User
 {
