@@ -9,7 +9,7 @@ const Admin = lazy(() => import('./pages/admin'));
 const Seller = lazy(() => import('./pages/seller'));
 const Courier = lazy(() => import('./pages/courier'));
 
-const queryClient = new QueryClient({ defaultOptions: { queries: { refetchOnWindowFocus: true, retry: 1 } } });
+export const queryClient = new QueryClient({ defaultOptions: { queries: { refetchOnWindowFocus: true, retry: 1 } } });
 
 export function useMe() {
   return useQuery({

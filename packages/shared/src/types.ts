@@ -121,6 +121,8 @@ export interface Order {
   delivery: { status: DeliveryStatus; address: string | null; history: StatusEvent[] } | null;
   history: StatusEvent[];
   trackingUrl: string | null;
+  /** Токен публичного отслеживания (для повторной оплаты) */
+  trackingToken?: string | null;
   createdAt: string;
 }
 

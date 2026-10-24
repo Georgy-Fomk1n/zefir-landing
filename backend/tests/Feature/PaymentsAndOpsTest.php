@@ -266,7 +266,7 @@ it('выполняет служебные команды', function () {
 
 it('отдаёт деградацию health, если БД недоступна', function () {
     config(['cache.default' => 'array']);
-    \Illuminate\Support\Facades\DB::shouldReceive('select')->once()->andThrow(new RuntimeException('db down'));
+    DB::shouldReceive('select')->once()->andThrow(new RuntimeException('db down'));
     $this->getJson('/api/health')->assertStatus(503)->assertJsonPath('db', false)->assertJsonPath('status', 'degraded');
 });
 

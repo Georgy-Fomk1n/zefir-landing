@@ -142,8 +142,22 @@ function OrderDetails() {
           <li key={i}>{new Date(h.at).toLocaleString('ru-RU')} — {orderStatusLabels[h.to as keyof typeof orderStatusLabels] ?? deliveryStatusLabels[h.to as keyof typeof deliveryStatusLabels] ?? h.to}{h.comment ? ` (${h.comment})` : ''}</li>
         ))}
       </ol>
+      {o.status === 'pending_payment' && o.trackingToken && <RetryPayment token={o.trackingToken} />}
       {o.trackingUrl && <p>Ссылка для отслеживания без входа: <a href={o.trackingUrl}>{o.trackingUrl}</a></p>}
     </div>
+  );
+}
+
+function RetryPayment({ token }: { token: string }) {
+  const pay = useMutation({
+    mutationFn: () => api.post<{ payment: { url: string } }>(`/track/${encodeURIComponent(token)}/pay`),
+    onSuccess: (r) => window.location.assign(r.payment.url),
+  });
+  return (
+    <p>
+      <button type="button" className="btn btn-primary btn-sm" disabled={pay.isPending} onClick={() => pay.mutate()}>Оплатить заказ</button>
+      {pay.error && <span className="error"> {formError(pay.error)}</span>}
+    </p>
   );
 }
 

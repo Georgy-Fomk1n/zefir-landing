@@ -12,7 +12,7 @@ import { useCart } from '../lib/cart';
 import { reachGoal } from '../lib/metrika';
 import { Seo } from '../seo/Seo';
 
-const schema = z.object({
+export const checkoutSchema = z.object({
   name: z.string().trim().min(2, 'Укажите имя'),
   phone: z.string().trim().regex(/^\+?[78][\d\s()-]{9,}$/, 'Телефон в формате +7…'),
   email: z.string().trim().email('Проверьте email').or(z.literal('')),
@@ -35,7 +35,7 @@ const schema = z.object({
   }
 });
 
-export type CheckoutForm = z.infer<typeof schema>;
+export type CheckoutForm = z.infer<typeof checkoutSchema>;
 
 interface Quote {
   subtotal: number;
@@ -58,8 +58,8 @@ export default function Checkout() {
   const cart = useCart();
   const { user } = useAuth();
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
-  const form = useForm<z.input<typeof schema>, unknown, CheckoutForm>({
-    resolver: zodResolver(schema),
+  const form = useForm<z.input<typeof checkoutSchema>, unknown, CheckoutForm>({
+    resolver: zodResolver(checkoutSchema),
     defaultValues: { fulfilment: 'pickup', email: '', points: 0 },
   });
   const { register, handleSubmit, watch, formState: { errors }, setValue } = form;

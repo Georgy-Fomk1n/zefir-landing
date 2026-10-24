@@ -5,5 +5,16 @@ import { defineConfig } from 'vite';
 export default defineConfig({
   plugins: [react()],
   build: { target: 'es2022' },
-  test: { environment: 'jsdom', include: ['src/**/*.test.{ts,tsx}'] },
+  test: {
+    environment: 'jsdom',
+    setupFiles: ['./vitest.setup.ts'],
+    include: ['src/**/*.test.{ts,tsx}'],
+    coverage: {
+      provider: 'v8',
+      include: ['src/**/*.{ts,tsx}'],
+      exclude: ['**/*.test.*', 'src/main.tsx'],
+      reporter: ['text-summary', 'text', 'lcov'],
+      thresholds: { lines: 85, statements: 85, functions: 80, branches: 75 },
+    },
+  },
 } as Parameters<typeof defineConfig>[0]);
