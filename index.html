@@ -3,7 +3,9 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#FAF3EA" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#1B1220" media="(prefers-color-scheme: dark)">
     <meta name="description"
         content="Закажите корпусные пирожные ручной работы в Москве. Шоколадный корпус, нежная начинка, ПП-варианты без сахара. Доставка через Яндекс Еда и Flowwow, самовывоз с ул. Базовская, 17.">
     <meta name="keywords"
@@ -333,10 +335,115 @@ footer { padding: 64px 0 96px; }
 @media (min-width: 768px) { .footer-legal { flex-direction: row; justify-content: space-between; align-items: flex-end; } }
 .footer-copyright { color: var(--ink-muted); font-size: .875rem; }
 
-/* Mobile sticky order button */
-.mobile-cta { position: fixed; bottom: 16px; left: 16px; right: 16px; z-index: 999; }
-@media (min-width: 768px) { .mobile-cta { display: none; } }
-.mobile-cta .btn { width: 100%; background: var(--brand-deep); border-color: var(--brand-deep); color: #fff; }
+
+
+/* ===== Phones: iOS (HIG) layout ===== */
+.tabbar { display: none; }
+@media (max-width: 767px) {
+    :root {
+        --grouped: #F1E9DD; --cell: #FFFDF9; --sep: #2B1B1730; --tab-h: 49px;
+        --safe-b: env(safe-area-inset-bottom, 0px); --safe-t: env(safe-area-inset-top, 0px);
+        --r-cell: 12px; --r-thumb: 12px;
+    }
+    @media (prefers-color-scheme: dark) { :root { --grouped: #0E0813; --cell: #281A2F; --sep: #F3E9F538; } }
+    html { scroll-padding-top: calc(52px + var(--safe-t)); -webkit-text-size-adjust: 100%; }
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', sans-serif;
+        font-size: 17px; line-height: 1.4; background: var(--grouped);
+        padding-bottom: calc(var(--tab-h) + var(--safe-b) + 24px);
+        -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased;
+    }
+    .container { padding: 0 max(16px, env(safe-area-inset-left)) 0 max(16px, env(safe-area-inset-right)); }
+    h1, h2, h3 { letter-spacing: -.022em; }
+
+    /* Navigation bar: compact, translucent, centred logo */
+    .site-header { padding-top: var(--safe-t); border-bottom: .5px solid var(--sep); background: var(--glass); }
+    .header-content { justify-content: center; min-height: 44px; padding-block: 4px; }
+    .logo { width: 36px; }
+    .site-header nav, .header-content > .btn { display: none; }
+
+    /* Large title */
+    section { padding: 28px 0; }
+    .hero { padding: 8px 0 20px; }
+    .hero-media { aspect-ratio: 4 / 3; border-radius: 20px; margin-bottom: 4px; }
+    .hero-meta { font-size: 13px; letter-spacing: .02em; text-transform: none; font-weight: 400; margin-bottom: 4px; }
+    .hero h1 { font-size: 34px; line-height: 1.12; font-weight: 700; letter-spacing: -.026em; margin-bottom: 12px; }
+    .hero-subtitle { font-size: 17px; line-height: 1.4; margin-bottom: 20px; }
+    .section-header { margin-bottom: 12px; }
+    .section-header h2 { font-size: 22px; line-height: 1.2; font-weight: 700; margin-bottom: 2px; }
+    .section-header p { font-size: 15px; line-height: 1.35; }
+
+    /* Buttons: filled / tinted, 50pt, continuous corners */
+    .btn { min-height: 50px; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 14px; font-size: 17px; font-weight: 600; transition: opacity .15s, transform .15s; }
+    .btn-primary, .btn-primary:hover { background: var(--brand-deep); color: #fff; border: 0; }
+    .btn-secondary, .btn-secondary:hover { background: color-mix(in srgb, var(--brand) 14%, transparent); color: var(--brand); }
+    .btn:active { opacity: .6; transform: scale(.98); }
+    .cta-group { gap: 10px; }
+    /* App Store-style capsule */
+    .btn-sm { min-height: 32px; padding: 0 16px; border-radius: 16px; font-size: 15px; font-weight: 700; display: inline-flex; background: color-mix(in srgb, var(--brand) 14%, transparent); color: var(--brand); }
+    .btn-sm:hover { background: color-mix(in srgb, var(--brand) 14%, transparent); color: var(--brand); }
+
+    /* Inset grouped lists */
+    .menu, .faq-list, .legend { background: var(--cell); border: 0; border-radius: var(--r-cell); overflow: hidden; }
+    .menu-item { grid-template-columns: 64px 1fr; gap: 2px 12px; padding: 12px 16px; border-bottom: 0; position: relative; align-items: start; }
+    .menu-item + .menu-item::before { content: ''; position: absolute; top: 0; left: 92px; right: 0; height: .5px; background: var(--sep); }
+    .menu-thumb { width: 64px; height: 64px; border-radius: var(--r-thumb); grid-row: span 3; }
+    .menu-name { font-size: 17px; font-weight: 600; line-height: 1.25; }
+    .menu-desc { font-size: 15px; line-height: 1.3; }
+    .menu-buy { margin-top: 6px; }
+    .price { font-size: 17px; font-weight: 600; }
+
+    .legend { counter-reset: l; }
+    .legend li { min-height: 44px; align-items: center; padding: 8px 16px; border-bottom: 0; font-weight: 400; position: relative; }
+    .legend li + li::before { content: ''; position: absolute; top: 0; left: 16px; right: 0; height: .5px; background: var(--sep); }
+    .inside-photo { border-radius: 20px; margin-bottom: 12px; }
+    .inside-grid { gap: 12px; }
+
+    .pp-section { background: transparent; }
+    .pp-grid { gap: 12px; }
+    .pp-item { background: var(--cell); border-radius: var(--r-cell); padding: 12px; }
+    .pp-media { border-radius: 10px; margin-bottom: 10px; aspect-ratio: 4 / 3; }
+    .pp-item .menu-buy { margin-top: 10px; }
+
+    .custom-grid { border: 0; gap: 12px; }
+    .custom-col, .custom-col + .custom-col { background: var(--cell); border: 0; border-radius: var(--r-cell); padding: 16px; }
+    .custom-col h3 { font-size: 20px; font-weight: 700; }
+    .custom-features li { padding: 11px 0; font-size: 15px; }
+
+    .founder-section { background: transparent; }
+    .founder-image { max-width: none; aspect-ratio: 4 / 3; border-radius: 20px; }
+    .founder-content p:not(.founder-role) { font-size: 17px; }
+    .reviews-frame { border: 0; border-radius: var(--r-cell); max-width: none; }
+
+    .bento-grid { gap: 12px; }
+    .bento-item { background: var(--cell); border: 0; border-radius: var(--r-cell); padding: 16px; }
+    .bento-item h3 { font-size: 20px; margin-bottom: 10px; }
+
+    .faq-item { border: 0; position: relative; }
+    .faq-item + .faq-item::before { content: ''; position: absolute; top: 0; left: 16px; right: 0; height: .5px; background: var(--sep); }
+    .faq-item summary { min-height: 44px; padding: 11px 16px; font-size: 17px; font-weight: 400; }
+    .faq-item summary::after { content: ''; width: 8px; height: 8px; border-right: 2px solid var(--ink-muted); border-bottom: 2px solid var(--ink-muted); transform: rotate(-45deg); font-size: 0; opacity: .6; flex-shrink: 0; transition: transform .2s; }
+    .faq-item[open] summary::after { transform: rotate(45deg); }
+    .faq-item p { padding: 0 16px 14px; font-size: 15px; }
+
+    .final-cta { margin: 12px 16px 0; border-radius: 20px; padding: 28px 0; }
+    .final-cta .container { padding: 0 20px; }
+    .final-cta h2 { font-size: 26px; }
+    .final-cta p { font-size: 17px; margin-bottom: 20px; }
+    .final-cta .btn-primary { background: #fff; color: var(--brand-deep); }
+    .final-cta .btn-secondary { background: rgba(255,255,255,.2); color: #fff; }
+    footer { padding: 28px 0 16px; }
+
+    /* Tab bar: translucent material, 49pt + home indicator */
+    .tabbar { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 1000; height: calc(var(--tab-h) + var(--safe-b)); padding: 0 env(safe-area-inset-right) var(--safe-b) env(safe-area-inset-left); background: var(--paper); border-top: .5px solid var(--sep); }
+    @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+        .tabbar { background: var(--glass); -webkit-backdrop-filter: blur(20px) saturate(180%); backdrop-filter: blur(20px) saturate(180%); }
+    }
+    .tab { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-decoration: none; color: var(--ink-muted); font-size: 10px; font-weight: 500; line-height: 1.2; letter-spacing: .01em; }
+    .tab svg { width: 25px; height: 25px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+    .tab.active { color: var(--brand); }
+    .tab:active { opacity: .5; }
+}
 
 @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
@@ -841,13 +948,24 @@ footer { padding: 64px 0 96px; }
         </div>
     </footer>
 
-    <!-- Mobile Fixed CTA -->
-    <div class="mobile-cta">
-        <a href="#location" class="btn btn-primary">Заказать</a>
-    </div>
+    <!-- iOS-style tab bar (phones only) -->
+    <nav class="tabbar" aria-label="Разделы">
+        <a href="#header" class="tab" data-tab="top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 11 12 4l8.5 7M6 9.5V20h12V9.5"/></svg><span>Главная</span></a>
+        <a href="#flavors" class="tab" data-tab="flavors"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg><span>Вкусы</span></a>
+        <a href="#custom" class="tab" data-tab="custom"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l1-4L16 5l3 3L8 19zM14 7l3 3"/></svg><span>На заказ</span></a>
+        <a href="#location" class="tab" data-tab="location"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8h12l-1 12H7zM9 8a3 3 0 0 1 6 0"/></svg><span>Заказать</span></a>
+    </nav>
 
     <script>
         document.getElementById('current-year').textContent = new Date().getFullYear();
+        (function () {
+            var tabs = document.querySelectorAll('.tab'); if (!tabs.length || !('IntersectionObserver' in window)) return;
+            var map = { header: 'top', flavors: 'flavors', custom: 'custom', location: 'location' };
+            function set(k) { tabs.forEach(function (t) { var on = t.dataset.tab === k; t.classList.toggle('active', on); on ? t.setAttribute('aria-current', 'true') : t.removeAttribute('aria-current'); }); }
+            set('top');
+            var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) set(map[e.target.id]); }); }, { rootMargin: '-45% 0px -50% 0px' });
+            Object.keys(map).forEach(function (id) { var el = document.getElementById(id); if (el) io.observe(el); });
+        })();
     </script>
 </body>
 
