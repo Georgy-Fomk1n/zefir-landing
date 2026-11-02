@@ -52,7 +52,8 @@
                                 @endforeach
                             </fieldset>
                         @endif
-                        <div class="buyrow" style="margin-top:28px"><button class="btn btn-main" type="button" data-primary>В корзину · {{ rub($variants[0]['price']) }}</button></div>
+                        <button class="note-toggle" type="button" style="margin-top:20px" tabindex="-1"><span class="pl" aria-hidden="true"><svg class="i" viewBox="0 0 24 24" style="width:18px;height:18px"><path d="M6 12h12M12 6v12"/></svg></span>Открытка с подписью от руки, бесплатно</button>
+                        <div class="buyrow" style="margin-top:20px"><div class="qty lg"><button type="button" tabindex="-1" aria-label="Меньше"><svg class="i" viewBox="0 0 24 24" style="width:18px;height:18px"><path d="M6 12h12"/></svg></button><output class="tn">1</output><button type="button" tabindex="-1" aria-label="Больше"><svg class="i" viewBox="0 0 24 24" style="width:18px;height:18px"><path d="M6 12h12M12 6v12"/></svg></button></div><button class="btn btn-main" type="button" data-primary>В корзину · {{ rub($variants[0]['price']) }}</button></div>
                     </div>
                 @else
                     <div style="display:flex;align-items:baseline;gap:16px;flex-wrap:wrap"><span class="price" style="font-size:22px">{{ $product->priceText() }}</span></div>

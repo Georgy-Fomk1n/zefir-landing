@@ -21,27 +21,40 @@ $('#themeBtn')?.addEventListener('click', () => {
     try { localStorage.setItem('theme', root.dataset.theme); } catch (_) { }
 });
 
-/* ---------- Статус «открыто» (страницы кэшируются, поэтому считаем в браузере) ---------- */
-function openNow(cfg) {
-    const n = new Date(), t = n.getHours() + n.getMinutes() / 60;
-    return !cfg.closed.includes(n.getDay()) && t >= cfg.open && t < cfg.close;
+/* ---------- Статус «открыто» (страницы кэшируются, поэтому считаем в браузере, но по времени кондитерской, а не гостя) ---------- */
+function shopNow(tz) {
+    try {
+        const parts = Object.fromEntries(new Intl.DateTimeFormat('en-US', { timeZone: tz, weekday: 'short', hour: 'numeric', minute: 'numeric', hourCycle: 'h23' }).formatToParts(new Date()).map((x) => [x.type, x.value]));
+        return { day: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].indexOf(parts.weekday), t: +parts.hour + +parts.minute / 60 };
+    } catch (_) { const n = new Date(); return { day: n.getDay(), t: n.getHours() + n.getMinutes() / 60 }; }
 }
 function paintOpen() {
     const el = $('[data-open-now]');
-    if (el) {
-        const cfg = { open: +el.dataset.open, close: +el.dataset.close, closed: el.dataset.closed.split(',').filter(Boolean).map(Number) };
-        const o = openNow(cfg);
-        el.textContent = o ? `Открыто до ${cfg.close}:00` : 'Сейчас закрыто';
-        el.classList.toggle('closed', !o);
-        const st = $('[data-status]');
-        if (st) {
-            const n = new Date(), t = n.getHours() + n.getMinutes() / 60, d = n.getDay();
-            st.classList.toggle('open', o); st.classList.toggle('closed', !o);
-            $('[data-status-text]', st).textContent = o ? 'Сейчас открыто' : 'Сейчас закрыто' + (cfg.closed.includes(d) || (d === 0 && t >= cfg.close && cfg.closed.includes(1)) ? ' (откроется во вторник в 10:00)' : t < cfg.open ? ` (откроется сегодня в ${cfg.open}:00)` : ` (откроется завтра в ${cfg.open}:00)`);
-        }
+    if (!el) return;
+    const cfg = { open: +el.dataset.open, close: +el.dataset.close, closed: el.dataset.closed.split(',').filter(Boolean).map(Number) };
+    const { day: d, t } = shopNow(el.dataset.tz || 'Europe/Moscow');
+    const o = !cfg.closed.includes(d) && t >= cfg.open && t < cfg.close;
+    el.textContent = o ? `Открыто до ${cfg.close}:00` : 'Сейчас закрыто';
+    el.classList.toggle('closed', !o);
+    const st = $('[data-status]');
+    if (st) {
+        st.classList.toggle('open', o); st.classList.toggle('closed', !o);
+        const next = (d + 1) % 7;
+        const when = cfg.closed.includes(d) || t >= cfg.close
+            ? (cfg.closed.includes(next) ? 'во вторник' : 'завтра')   // выходной — ближайшее открытие через день
+            : 'сегодня';
+        $('[data-status-text]', st).textContent = o ? 'Сейчас открыто' : `Сейчас закрыто (откроется ${when} в ${cfg.open}:00)`;
     }
 }
 paintOpen(); setInterval(paintOpen, 60000);
+
+/* ---------- Мобильное меню: закрывается по клику снаружи, Esc и переходу ---------- */
+const menu = $('[data-menu]');
+if (menu) {
+    document.addEventListener('click', (e) => { if (menu.open && !menu.contains(e.target)) menu.open = false; });
+    addEventListener('keydown', (e) => { if (e.key === 'Escape' && menu.open) { menu.open = false; $('summary', menu).focus(); } });
+    menu.addEventListener('click', (e) => { if (e.target.closest('a')) menu.open = false; });
+}
 
 /* ---------- Сортировка в каталоге без кнопки «Применить» ---------- */
 $$('[data-autosubmit]').forEach((s) => s.addEventListener('change', () => s.form.submit()));

@@ -154,7 +154,7 @@ export default function Checkout({ phone: shopPhone, address, fee: courierFee })
 
     return (
         <Motion>
-            <form className="w co" onSubmit={submit} noValidate>
+            <form className="w co" id="checkout-form" onSubmit={submit} noValidate>
                 <div className="main">
                     <h1 className="d1b" style={{ fontSize: 'clamp(44px,5vw,72px)' }}>Оформление <em>без регистрации</em></h1>
                     <Err id="formE">{errors.form}</Err>
@@ -202,6 +202,14 @@ export default function Checkout({ phone: shopPhone, address, fee: courierFee })
                     </m.button>
                     <p className="small">Оплата при получении: картой или наличными. Мы позвоним или напишем, чтобы подтвердить заказ.</p>
                 </aside>
+
+                {/* На телефоне итог и кнопка всегда под рукой */}
+                <div className="co-bar glass">
+                    <div className="bb-t"><small>Итого</small><b>{rub(cart.total + fee)}</b></div>
+                    <button className="btn btn-main" type="submit" disabled={busy}>
+                        {busy ? <><span className="spin" aria-hidden="true" /> Отправляем…</> : 'Оформить заказ'}
+                    </button>
+                </div>
             </form>
         </Motion>
     );

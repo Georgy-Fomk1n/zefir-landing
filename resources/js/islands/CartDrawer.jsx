@@ -86,7 +86,7 @@ export default function CartDrawer() {
     const bar = createPortal(
         <Motion>
             <AnimatePresence>
-                {cart.count > 0 && !open && (
+                {cart.count > 0 && !open && !/^\/(checkout|order|product)/.test(location.pathname) && (
                     <m.div className="mobile-cta glass" initial={{ y: 90, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 90, opacity: 0 }} transition={spring}>
                         <button className="btn btn-main" type="button" onClick={() => { last.current = document.activeElement; window.__cartOpen = true; setOpen(true); }}>
                             Корзина · {cart.count} · {rub(cart.total)}

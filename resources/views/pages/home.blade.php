@@ -11,6 +11,7 @@
 @php
     use App\Support\Img;
     $pic = fn ($name, $alt, $sizes = '(min-width: 820px) 25vw, 45vw', $eager = false) => Img::picture(Img::named($name), $alt, $sizes, $eager);
+    $tile = fn ($name, $alt, $sizes = '(min-width: 820px) 25vw, 45vw', $cls = '') => new \Illuminate\Support\HtmlString('<div class="tile ' . $cls . '">' . $pic($name, $alt, $sizes) . '</div>');
 @endphp
 
 @section('content')
@@ -31,8 +32,8 @@
             <video data-src="/images/mushrooms.mp4" autoplay muted loop playsinline preload="none" aria-label="Зефирные грибочки в корзинке"></video>
             <span class="vtag"><svg class="i" aria-hidden="true" viewBox="0 0 24 24" style="width:12px;height:12px;fill:currentColor;stroke:none"><path d="M8 5.5v13l11-6.5z"/></svg>Зефирные грибочки</span>
         </div>
-        {{ $pic('zefir', 'Розовый зефир') }}
-        {{ $pic('pear', 'Корпусное пирожное Груша') }}
+        {{ $tile('zefir', 'Розовый зефир') }}
+        {{ $tile('pear', 'Корпусное пирожное Груша') }}
     </div>
 </section>
 
@@ -40,7 +41,7 @@
     <div class="w cats">
         @foreach([['cake','pear','Пирожные','Корпусные с хрустящим шоколадом, картошка, эклеры. Есть без сахара.'],['zefir','zefir-bouquet','Зефир и букеты','На натуральном пюре, сахара вдвое меньше. Букеты и чашки на заказ.'],['pryanik','gingerbread','Пряники','Имбирные, с ручной росписью, к праздникам и школе.'],['tort','cake-strawberry','Торты и бенто','На заказ, начинку выбираете вы.']] as [$cat, $img, $name, $desc])
             <a href="{{ route('catalog', ['cat' => $cat]) }}">
-                {{ $pic($img, '', '(min-width: 980px) 22vw, (min-width: 620px) 45vw, 90vw') }}
+                {{ $tile($img, '', '(min-width: 980px) 22vw, (min-width: 620px) 45vw, 90vw') }}
                 <span class="t"><b>{{ $name }}</b><svg class="i" aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
                 <span class="small">{{ $desc }}</span>
             </a>
@@ -67,8 +68,8 @@
         <div class="a">
             <div class="cake-grid">
                 <div class="tall"><video data-src="/images/cake-butterflies.mp4" autoplay muted loop playsinline preload="none" aria-label="Торт с бабочками"></video></div>
-                {{ $pic('cake-strawberry', 'Торт с клубникой и кремом пломбир') }}
-                {{ $pic('bento', 'Бенто-торт с надписью') }}
+                {{ $tile('cake-strawberry', 'Торт с клубникой и кремом пломбир') }}
+                {{ $tile('bento', 'Бенто-торт с надписью') }}
             </div>
         </div>
         <div class="b">
@@ -116,9 +117,9 @@
         </div>
         <div class="a">
             <div class="photos">
-                {{ $pic('hall', 'Зал кондитерской с надписью «Место, где тебя ждут»') }}
-                {{ $pic('box', 'Фирменная коробка у входа в кондитерскую вечером') }}
-                <span class="wide">{{ $pic('showcase', 'Витрина с десертами', '(min-width: 820px) 40vw, 90vw') }}</span>
+                {{ $tile('hall', 'Зал кондитерской с надписью «Место, где тебя ждут»') }}
+                {{ $tile('box', 'Фирменная коробка у входа в кондитерскую вечером') }}
+                {{ $tile('showcase', 'Витрина с десертами', '(min-width: 820px) 40vw, 90vw', 'wide') }}
             </div>
         </div>
     </div>

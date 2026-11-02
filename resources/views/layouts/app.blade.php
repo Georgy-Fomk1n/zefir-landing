@@ -46,7 +46,16 @@
             <a href="{{ route('delivery') }}" @if(request()->routeIs('delivery')) aria-current="page" @endif>Доставка и контакты</a>
         </nav>
         <div class="tools">
-            <span class="open-now" data-open-now data-open="{{ config('shop.hours.open') }}" data-close="{{ config('shop.hours.close') }}" data-closed="{{ implode(',', config('shop.hours.closed_days')) }}"></span>
+            <span class="open-now" data-open-now data-tz="{{ config('app.timezone') }}" data-open="{{ config('shop.hours.open') }}" data-close="{{ config('shop.hours.close') }}" data-closed="{{ implode(',', config('shop.hours.closed_days')) }}"></span>
+            <details class="menu" data-menu>
+                <summary class="ib" aria-label="Меню"><svg class="i" aria-hidden="true" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></summary>
+                <nav class="menu-panel glass" aria-label="Меню">
+                    <a href="{{ route('catalog') }}" @if(request()->routeIs('catalog', 'product')) aria-current="page" @endif>Каталог</a>
+                    <a href="{{ route('home') }}#cakes">Торты на заказ</a>
+                    <a href="{{ route('delivery') }}" @if(request()->routeIs('delivery')) aria-current="page" @endif>Доставка и контакты</a>
+                    <a class="tel" href="{{ config('shop.phone_href') }}">{{ config('shop.phone') }}</a>
+                </nav>
+            </details>
             <button class="ib" id="themeBtn" type="button" aria-label="Сменить тему"><svg class="i" aria-hidden="true" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4 6.5 6.5 0 0 0 20 14.5z"/></svg></button>
             <button class="ib" type="button" data-open-cart aria-label="Открыть корзину"><svg class="i" aria-hidden="true" viewBox="0 0 24 24"><path d="M5 8h14l-1.2 11.2a1 1 0 0 1-1 .8H7.2a1 1 0 0 1-1-.8z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></svg><span class="n tn" data-island="cart-count" hidden>0</span></button>
         </div>
