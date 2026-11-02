@@ -181,7 +181,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .crumbs span:last-child { color: var(--choc); }
 .toolbar { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: space-between; padding: 16px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .chips { display: flex; gap: 8px; flex-wrap: wrap; }
-.chip-b { height: 40px; padding: 0 18px; border-radius: 999px; border: 1px solid var(--line-2); background: none; font-size: 14px; cursor: pointer; transition: background-color .3s var(--ease), color .3s var(--ease), border-color .3s var(--ease), transform .3s var(--ease); }
+.chip-b { display: inline-flex; align-items: center; text-decoration: none; height: 40px; padding: 0 18px; border-radius: 999px; border: 1px solid var(--line-2); background: none; font-size: 14px; cursor: pointer; transition: background-color .3s var(--ease), color .3s var(--ease), border-color .3s var(--ease), transform .3s var(--ease); }
 .chip-b:hover { border-color: var(--choc); }
 .chip-b:active { transform: scale(.97); }
 .chip-b[aria-pressed="true"] { background: var(--choc); color: var(--milk); border-color: var(--choc); }

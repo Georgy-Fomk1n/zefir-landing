@@ -1,26 +1,18 @@
-<!DOCTYPE html>
-<html lang="ru">
+<?php
+declare(strict_types=1);
+require __DIR__ . '/app/bootstrap.php';
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Доставка и контакты — Зефир и пряник, Москва, Базовская, 17</title>
-    <meta name="description" content="Самовывоз с ул. Базовская, 17 и доставка по Москве. Часы работы: вторник–воскресенье, 10:00–21:00. Телефон, Telegram, ВКонтакте, Flowwow.">
-    <link rel="canonical" href="https://zefiripryanik.ru/info.html">
-    <link rel="icon" type="image/png" href="favicon.png">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&family=Caveat:wght@500&display=swap">
-    <link rel="stylesheet" href="css/shop.css">
-</head>
-
-<body>
-    <div id="site-header"></div>
-
+page_start([
+    'title' => 'Доставка и контакты — Зефир и пряник, Москва, Базовская, 17',
+    'description' => 'Самовывоз с ул. Базовская, 17 и доставка по Москве. Часы работы: вторник–воскресенье, 10:00–21:00. Телефон, Telegram, ВКонтакте, Flowwow.',
+    'canonical' => 'https://zefiripryanik.ru/info.php',
+    'active' => 'info',
+]);
+?>
     <main class="g" style="padding-block:24px 120px">
         <div class="w" style="display:flex;flex-direction:column;gap:72px">
             <div style="display:flex;flex-direction:column;gap:16px">
-                <nav class="crumbs" aria-label="Навигация"><a href="index.html">Главная</a><span aria-hidden="true">/</span><span>Доставка и контакты</span></nav>
+                <nav class="crumbs" aria-label="Навигация"><a href="index.php">Главная</a><span aria-hidden="true">/</span><span>Доставка и контакты</span></nav>
                 <h1 class="d1b">Доставка <em>и контакты</em></h1>
             </div>
 
@@ -30,7 +22,9 @@
                     <h2>Самовывоз</h2>
                     <p style="color:var(--choc-2)">ул. Базовская, 17. Соберём утром в день выдачи, забрать можно в выбранный час.</p>
                     <p class="small">Вт–Вс, 10:00–21:00, понедельник выходной. Вход рядом со вторым подъездом.</p>
-                    <span class="status" id="status" role="status"><span class="dot"></span><span id="statusText"></span></span>
+                    <?php $o = open_now(); $t = (int) date('G') + (int) date('i') / 60; $d = (int) date('w');
+                    $st = $o ? 'Сейчас открыто' : 'Сейчас закрыто' . (($d === 1 || ($d === 0 && $t >= 21)) ? ' (откроется во вторник в 10:00)' : ($t < 10 ? ' (откроется сегодня в 10:00)' : ' (откроется завтра в 10:00)')); ?>
+                    <span class="status <?= $o ? 'open' : 'closed' ?>" role="status"><span class="dot"></span><span><?= e($st) ?></span></span>
                 </section>
                 <section>
                     <span class="v">390 ₽</span>
@@ -71,21 +65,6 @@
         </div>
     </main>
 
-    <div id="site-footer"></div>
 
-    <script src="js/products.js"></script>
-    <script src="js/shop.js"></script>
-    <script>
-        Shop.init({ active: 'info' });
-        (function () {
-            function paint() {
-                var n = new Date(), o = Shop.openStatus(), t = n.getHours() + n.getMinutes() / 60, d = n.getDay(), el = document.getElementById('status');
-                el.classList.toggle('open', o); el.classList.toggle('closed', !o);
-                document.getElementById('statusText').textContent = o ? 'Сейчас открыто' : 'Сейчас закрыто' + (d === 1 || (d === 0 && t >= 21) ? ' (откроется во вторник в 10:00)' : t < 10 ? ' (откроется сегодня в 10:00)' : ' (откроется завтра в 10:00)');
-            }
-            paint(); setInterval(paint, 60000);
-        })();
-    </script>
-</body>
-
-</html>
+    
+<?php page_end(); ?>

@@ -1,16 +1,10 @@
-<!DOCTYPE html>
-<html lang="ru">
+<?php
+declare(strict_types=1);
+require __DIR__ . '/app/bootstrap.php';
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description"
-        content="Закажите корпусные пирожные ручной работы в Москве. Шоколадный корпус, нежная начинка, ПП-варианты без сахара. Закажите онлайн: самовывоз с ул. Базовская, 17 или доставка по Москве.">
+$head = <<<'HTML'
     <meta name="keywords"
         content="корпусные пирожные Москва, пирожные ручной работы, шоколадные пирожные, ПП пирожные без сахара, десерты на заказ, корпоративные десерты, заказать пирожные Москва, доставка десертов">
-    <title>Зефир и пряник — кондитерская на Базовской: пирожные, зефир, пряники, торты | Заказать онлайн</title>
-    <link rel="canonical" href="https://zefiripryanik.ru/">
-
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://zefiripryanik.ru/">
@@ -19,12 +13,6 @@
         content="Шоколадный корпус, нежная начинка, ПП-варианты без сахара. Доставка через Яндекс Еда и Flowwow.">
     <meta property="og:image" content="https://zefiripryanik.ru/images/банан.webp">
     <meta property="og:locale" content="ru_RU">
-
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="favicon.png">
-
-    <!-- Preload critical assets -->
-    <link rel="preload" href="images/logo.png" as="image">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
@@ -94,17 +82,17 @@
         }
     }
     </script>
+HTML;
+$head .= "\n";
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&family=Caveat:wght@500&display=swap">
-    <link rel="stylesheet" href="css/shop.css">
-</head>
-
-<body>
-    <div id="site-header"></div>
-
+page_start([
+    'title' => 'Зефир и пряник — кондитерская на Базовской: пирожные, зефир, пряники, торты | Заказать онлайн',
+    'description' => 'Закажите корпусные пирожные, зефир на натуральном пюре, имбирные пряники и торты в Москве. Самовывоз с ул. Базовская, 17 или доставка по Москве.',
+    'canonical' => 'https://zefiripryanik.ru/',
+    'active' => 'home',
+    'head' => $head,
+]);
+?>
     <main>
         <!-- Hero -->
         <section class="hero w g">
@@ -114,7 +102,7 @@
                 <h1 class="d1">Место, где <em class="ac">тебя ждут</em></h1>
                 <p class="lead">Кондитерская на Базовской. Зефир на натуральном пюре, корпусные пирожные, имбирные пряники и торты на заказ. Заходите на кофе или заберите коробочку с собой.</p>
                 <div class="acts">
-                    <a class="btn btn-main" href="catalog.html">Смотреть витрину</a>
+                    <a class="btn btn-main" href="catalog.php">Смотреть витрину</a>
                     <a class="btn btn-text" href="#cakes">Заказать торт <svg class="i" aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></svg></a>
                 </div>
             </div>
@@ -131,10 +119,10 @@
         <!-- Разделы -->
         <section class="g rv" aria-label="Разделы" style="padding-bottom:clamp(72px,9vw,120px)">
             <div class="w cats">
-                <a href="catalog.html?cat=cake"><img src="images/shop/pear.jpg" alt="" loading="lazy" width="400" height="300"><span class="t"><b>Пирожные</b><svg class="i" aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></svg></span><span class="small">Корпусные с хрустящим шоколадом, картошка, эклеры. Есть без сахара.</span></a>
-                <a href="catalog.html?cat=zefir"><img src="images/shop/zefir-bouquet.jpg" alt="" loading="lazy" width="400" height="300"><span class="t"><b>Зефир и букеты</b><svg class="i" aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></svg></span><span class="small">На натуральном пюре, сахара вдвое меньше. Букеты и чашки на заказ.</span></a>
-                <a href="catalog.html?cat=pryanik"><img src="images/shop/gingerbread.jpg" alt="" loading="lazy" width="400" height="300"><span class="t"><b>Пряники</b><svg class="i" aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></svg></span><span class="small">Имбирные, с ручной росписью, к праздникам и школе.</span></a>
-                <a href="catalog.html?cat=tort"><img src="images/shop/cake-strawberry.jpg" alt="" loading="lazy" width="400" height="300"><span class="t"><b>Торты и бенто</b><svg class="i" aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></svg></span><span class="small">На заказ, начинку выбираете вы.</span></a>
+                <a href="catalog.php?cat=cake"><img src="images/shop/pear.jpg" alt="" loading="lazy" width="400" height="300"><span class="t"><b>Пирожные</b><svg class="i" aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></svg></span><span class="small">Корпусные с хрустящим шоколадом, картошка, эклеры. Есть без сахара.</span></a>
+                <a href="catalog.php?cat=zefir"><img src="images/shop/zefir-bouquet.jpg" alt="" loading="lazy" width="400" height="300"><span class="t"><b>Зефир и букеты</b><svg class="i" aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></svg></span><span class="small">На натуральном пюре, сахара вдвое меньше. Букеты и чашки на заказ.</span></a>
+                <a href="catalog.php?cat=pryanik"><img src="images/shop/gingerbread.jpg" alt="" loading="lazy" width="400" height="300"><span class="t"><b>Пряники</b><svg class="i" aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></svg></span><span class="small">Имбирные, с ручной росписью, к праздникам и школе.</span></a>
+                <a href="catalog.php?cat=tort"><img src="images/shop/cake-strawberry.jpg" alt="" loading="lazy" width="400" height="300"><span class="t"><b>Торты и бенто</b><svg class="i" aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></svg></span><span class="small">На заказ, начинку выбираете вы.</span></a>
             </div>
         </section>
 
@@ -143,9 +131,11 @@
             <div class="w">
                 <div class="sec-h">
                     <div class="k"><span class="eyebrow">Витрина сегодня</span><h2 class="d2">Что есть <em>в наличии</em></h2></div>
-                    <a class="btn btn-text" href="catalog.html">Весь каталог <svg class="i" aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></svg></a>
+                    <a class="btn btn-text" href="catalog.php">Весь каталог <svg class="i" aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></svg></a>
                 </div>
-                <div class="grid l" id="featured"></div>
+                <div class="grid l" id="featured">
+                    <?php foreach (['pear', 'potato', 'zefir-berry', 'eclair', 'tart', 'nuts'] as $i => $id) { echo card_html(product($id), $i); } ?>
+                </div>
             </div>
         </section>
 
@@ -171,7 +161,7 @@
                     </ul>
                     <p class="small">Красный бархат и Вишнёвый шоколад — <b style="color:var(--accent);font-weight:600">2 700 ₽ за кг</b>. Цену бенто и других тортов назовём после обсуждения. Заказывайте минимум за 3 дня.</p>
                     <div class="acts">
-                        <a class="btn btn-main" href="info.html#contacts">Обсудить торт</a>
+                        <a class="btn btn-main" href="info.php#contacts">Обсудить торт</a>
                         <span class="hand">«Смех с первого взгляда, любовь с первого кусочка»</span>
                     </div>
                 </div>
@@ -202,7 +192,7 @@
                         <div><b>ул. Базовская, 17</b><span class="small">Вход рядом со вторым подъездом</span></div>
                         <div><b>Вт–Вс, 10:00–21:00</b><span class="small">Понедельник выходной</span></div>
                     </div>
-                    <div><a class="btn btn-line" href="info.html">Как добраться</a></div>
+                    <div><a class="btn btn-line" href="info.php">Как добраться</a></div>
                 </div>
                 <div class="a">
                     <div class="photos">
@@ -215,18 +205,6 @@
         </section>
     </main>
 
-    <div id="site-footer"></div>
 
-    <script src="js/products.js"></script>
-    <script src="js/shop.js"></script>
-    <script>
-        Shop.init({ active: 'home' });
-        (function () {
-            var ids = ['pear', 'potato', 'zefir-berry', 'eclair', 'tart', 'nuts'];
-            document.getElementById('featured').innerHTML = ids.map(function (id, i) { return Shop.cardHtml(Shop.product(id), i); }).join('');
-            Shop.syncBuy();
-        })();
-    </script>
-</body>
-
-</html>
+    
+<?php page_end(); ?>
