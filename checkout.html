@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Оформление заказа — Зефир и пряник</title>
+    <meta name="robots" content="noindex">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&family=Caveat:wght@500&display=swap">
+    <link rel="stylesheet" href="css/shop.css">
+</head>
+
+<body>
+    <header class="top g">
+        <div class="bar glass">
+            <a class="logo" href="index.html" aria-label="Зефир и пряник — на главную"><img src="images/logo.png" alt="" width="40" height="40"><span>Зефир <i>и</i> пряник</span></a>
+            <ol class="steps" aria-label="Шаги оформления">
+                <li><span>01</span>Корзина</li>
+                <li aria-current="step"><span>02</span>Получение</li>
+                <li><span>03</span>Заказ принят</li>
+            </ol>
+            <button class="ib" id="themeBtn" type="button" aria-label="Сменить тему"><svg class="i" aria-hidden="true" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4 6.5 6.5 0 0 0 20 14.5z" /></svg></button>
+        </div>
+    </header>
+
+    <main class="g" style="padding-block:40px 120px">
+        <div class="w" id="empty" hidden style="display:flex;flex-direction:column;gap:24px;align-items:flex-start">
+            <h1 class="d1b">Корзина <em>пуста</em></h1>
+            <p class="lead">Добавьте что-нибудь из каталога, и вернёмся к оформлению.</p>
+            <a class="btn btn-main" href="catalog.html">Перейти в каталог</a>
+        </div>
+
+        <form class="w co" id="form" novalidate hidden>
+            <div class="main">
+                <h1 class="d1b" style="font-size:clamp(44px,5vw,72px)">Оформление <em>без регистрации</em></h1>
+
+                <fieldset class="opts">
+                    <legend class="h" style="font:500 28px/1.1 var(--display);text-transform:none;letter-spacing:0;color:var(--choc);padding-bottom:8px">Как получить</legend>
+                    <label class="opt"><input type="radio" name="ship" value="pickup" checked><span class="t">Самовывоз<small>ул. Базовская, 17</small></span><span class="pr">0&nbsp;₽</span></label>
+                    <label class="opt"><input type="radio" name="ship" value="courier"><span class="t">Курьером<small>По Москве в пределах МКАД, с хладоэлементом</small></span><span class="pr">390&nbsp;₽</span></label>
+                    <div class="field" id="addrBox" hidden style="padding-top:20px;flex:none">
+                        <label for="addr">Адрес доставки</label>
+                        <input class="inp" id="addr" autocomplete="street-address" placeholder="Улица, дом, квартира, подъезд, этаж" aria-describedby="addrE">
+                        <span class="hint e" id="addrE" hidden>Укажите адрес доставки</span>
+                    </div>
+                </fieldset>
+
+                <section aria-label="Дата и время" class="dtp" id="dtp">
+                    <div class="dtp-head">
+                        <h2 class="h" style="font:500 28px/1.1 var(--display)">Когда · <em style="color:var(--muted)" id="dtpMonth"></em></h2>
+                        <div class="dtp-nav">
+                            <button class="ib" type="button" id="prev" aria-label="Раньше"><svg class="i" viewBox="0 0 24 24" aria-hidden="true" style="transform:scaleX(-1)"><path d="M5 12h14M13 6l6 6-6 6" /></svg></button>
+                            <button class="ib" type="button" id="next" aria-label="Позже"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg></button>
+                        </div>
+                    </div>
+                    <div class="dtp-rail" id="rail" role="group" aria-label="Дата"></div>
+                    <div class="dtp-times" id="times" role="group" aria-label="Время"></div>
+                    <div class="dtp-sum"><svg class="i" viewBox="0 0 24 24" aria-hidden="true" style="width:18px;height:18px"><circle cx="12" cy="12" r="8.5" /><path d="M12 7.5V12l3 2" /></svg><span id="dtpSum">—</span></div>
+                    <span class="hint e" id="dtpE" hidden>Выберите день и время</span>
+                </section>
+
+                <section aria-label="Контакты" style="display:flex;flex-direction:column;gap:22px">
+                    <h2 class="h" style="font:500 28px/1.1 var(--display)" id="whoH">Кто заберёт</h2>
+                    <div class="row">
+                        <div class="field"><label for="name">Имя</label><input class="inp" id="name" autocomplete="given-name" aria-describedby="nameE"><span class="hint e" id="nameE" hidden>Введите имя</span></div>
+                        <div class="field"><label for="phone">Телефон</label><input class="inp tn" id="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+7 (900) 000-00-00" aria-describedby="phoneE"><span class="hint e" id="phoneE" hidden>Номер неполный: нужно 10 цифр после +7</span></div>
+                    </div>
+                    <div class="field" style="flex:none"><label for="comment">Комментарий к заказу</label><input class="inp" id="comment" placeholder="Необязательно" maxlength="200"></div>
+                </section>
+            </div>
+
+            <aside class="side" aria-label="Заказ">
+                <h2 class="h" style="margin-bottom:6px">Заказ</h2>
+                <div id="lines" style="display:flex;flex-direction:column;gap:14px"></div>
+                <div class="sline" style="padding-bottom:14px;border-bottom:1px solid var(--line)"><span>Получение</span><span id="shipSum">0&nbsp;₽</span></div>
+                <div class="sum tot"><span>Итого</span><span id="totSum"></span></div>
+                <button class="btn btn-main btn-block" type="submit" id="pay" style="margin-top:8px">Оформить заказ</button>
+                <p class="small" id="fail" hidden style="color:var(--bad)">Не получилось отправить заказ. Попробуйте ещё раз или позвоните нам.</p>
+                <p class="small" id="demoHint" hidden>Онлайн-оплата и отправка заказа в кондитерскую пока не подключены: это демонстрационное оформление.</p>
+            </aside>
+        </form>
+    </main>
+
+    <script src="js/products.js"></script>
+    <script src="js/shop.js"></script>
+    <script>
+        Shop.init({ active: 'cart', noDrawer: true });
+        (function () {
+            var $ = Shop.$, $$ = Shop.$$, rub = Shop.rub, esc = Shop.esc, C = Shop.cfg;
+            if (!Shop.count()) { $('#empty').hidden = false; return; }
+            $('#form').hidden = false;
+            $('#demoHint').hidden = !C.demo;
+
+            /* ---- Состав заказа ---- */
+            var ship = 'pickup';
+            function summary() {
+                var ls = Shop.lines(), card = Shop.card();
+                $('#lines').innerHTML = ls.map(function (x) {
+                    return '<div class="sline"><span>' + esc(x.name) + ' × ' + x.l.q + '</span><span>' + rub(x.sum) + '</span></div>';
+                }).join('') + (card.on ? '<div class="sline"><span>Открытка от руки</span><span style="color:var(--muted)">Бесплатно</span></div>' : '');
+                var fee = ship === 'courier' ? C.courierFee : 0;
+                $('#shipSum').innerHTML = rub(fee);
+                $('#totSum').innerHTML = rub(Shop.total() + fee);
+            }
+            summary();
+            var sent = false;
+            document.addEventListener('cart:change', function () { if (sent) return; if (!Shop.count()) location.reload(); else summary(); });
+
+            /* ---- Способ получения ---- */
+            $$('input[name="ship"]').forEach(function (r) {
+                r.addEventListener('change', function () {
+                    ship = r.value; $('#addrBox').hidden = ship !== 'courier';
+                    $('#whoH').textContent = ship === 'courier' ? 'Кто получит' : 'Кто заберёт';
+                    summary(); sumLine();
+                });
+            });
+
+            /* ---- Дата и время ---- */
+            var MG = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'],
+                MN = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+                WD = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'], SPAN = 28,
+                PARTS = [['Утро', [10, 11]], ['День', [12, 13, 15]], ['Вечер', [16, 17, 18, 19]]];
+            var T0 = new Date(); T0.setHours(0, 0, 0, 0);
+            function addD(d, n) { var x = new Date(d); x.setDate(x.getDate() + n); return x; }
+            function slotsFor(i) {
+                var d = addD(T0, i), closed = C.hours.closedDays.indexOf(d.getDay()) >= 0, now = new Date();
+                return PARTS.map(function (p) {
+                    return [p[0], p[1].map(function (h) { return { h: h, ok: !closed && !(i === 0 && h < now.getHours() + 2) }; })];
+                });
+            }
+            function hasFree(i) { return slotsFor(i).some(function (g) { return g[1].some(function (s) { return s.ok; }); }); }
+            var selI = null, selH = null, firstFree = -1;
+            for (var k = 0; k < SPAN; k++) if (hasFree(k)) { firstFree = k; break; }
+            if (firstFree >= 0) { selI = firstFree; }
+            function firstHour(i) { var a = slotsFor(i).reduce(function (r, g) { return r.concat(g[1]); }, []).filter(function (s) { return s.ok; }); return a.length ? a[0].h : null; }
+            selH = selI === null ? null : firstHour(selI);
+
+            var rail = $('#rail');
+            rail.innerHTML = Array.apply(null, Array(SPAN)).map(function (_, i) {
+                var d = addD(T0, i), f = hasFree(i), w = d.getDay();
+                var note = i === 0 ? 'сегодня' : i === 1 ? 'завтра' : !f ? (C.hours.closedDays.indexOf(w) >= 0 ? 'выходной' : 'нет мест') : d.getDate() === 1 ? MG[d.getMonth()].slice(0, 3) : '';
+                return '<button type="button" class="dtp-day' + (w === 0 || w === 6 ? ' we' : '') + '" data-i="' + i + '" aria-pressed="false" aria-label="' + WD[w] + ', ' + d.getDate() + ' ' + MG[d.getMonth()] + (f ? '' : ', недоступно') + '"' + (f ? '' : ' disabled') + '><small>' + WD[w] + '</small><b>' + d.getDate() + '</b><i>' + note + '</i></button>';
+            }).join('');
+
+            function head() {
+                var b = $$('.dtp-day', rail).filter(function (x) { return x.offsetLeft + x.offsetWidth / 2 >= rail.scrollLeft; })[0];
+                var d = addD(T0, b ? +b.dataset.i : 0);
+                $('#dtpMonth').textContent = MN[d.getMonth()] + ' ' + d.getFullYear();
+                $('#prev').disabled = rail.scrollLeft < 4;
+                $('#next').disabled = rail.scrollLeft + rail.clientWidth >= rail.scrollWidth - 4;
+            }
+            function drawSlots() {
+                if (selI === null) { $('#times').innerHTML = '<p class="small">Ближайшие дни недоступны. Позвоните нам, и мы подберём время.</p>'; return; }
+                $('#times').innerHTML = slotsFor(selI).map(function (g) {
+                    return '<div class="dtp-g"><span>' + g[0] + '</span><div>' + g[1].map(function (s) {
+                        return '<button type="button" class="slot" data-h="' + s.h + '" aria-pressed="' + (s.ok && s.h === selH) + '"' + (s.ok ? '' : ' disabled') + '><b>' + s.h + ':00</b><small>' + (s.ok ? 'до ' + (s.h + 1) + ':00' : 'занято') + '</small></button>';
+                    }).join('') + '</div></div>';
+                }).join('');
+            }
+            function dayName(i) { var d = addD(T0, i); return (i === 0 ? 'Сегодня' : i === 1 ? 'Завтра' : WD[d.getDay()]) + ', ' + d.getDate() + ' ' + MG[d.getMonth()]; }
+            function sumLine() {
+                $('#dtpSum').innerHTML = selI === null || selH === null ? '—' : '<b>' + dayName(selI) + '</b>&nbsp;· ' + selH + ':00–' + (selH + 1) + ':00 · ' + (ship === 'courier' ? 'курьер' : 'самовывоз');
+            }
+            function pick(i, scroll) {
+                selI = i; if (!slotsFor(i).some(function (g) { return g[1].some(function (s) { return s.ok && s.h === selH; }); })) selH = firstHour(i);
+                $$('.dtp-day', rail).forEach(function (b) { b.setAttribute('aria-pressed', +b.dataset.i === i); });
+                if (scroll) { var b = rail.querySelector('[data-i="' + i + '"]'); if (b) rail.scrollTo({ left: Math.max(0, b.offsetLeft - 76), behavior: 'auto' }); }
+                drawSlots(); sumLine(); $('#dtpE').hidden = true;
+            }
+            rail.addEventListener('click', function (e) { var b = e.target.closest('.dtp-day'); if (b && !b.disabled) pick(+b.dataset.i, false); });
+            $('#times').addEventListener('click', function (e) {
+                var b = e.target.closest('.slot'); if (!b || b.disabled) return;
+                selH = +b.dataset.h; $$('.slot', $('#times')).forEach(function (x) { x.setAttribute('aria-pressed', x === b); }); sumLine(); $('#dtpE').hidden = true;
+            });
+            var rs; rail.addEventListener('scroll', function () { cancelAnimationFrame(rs); rs = requestAnimationFrame(head); }, { passive: true });
+            $('#prev').addEventListener('click', function () { rail.scrollBy({ left: -rail.clientWidth * .8, behavior: 'smooth' }); });
+            $('#next').addEventListener('click', function () { rail.scrollBy({ left: rail.clientWidth * .8, behavior: 'smooth' }); });
+            if (selI !== null) pick(selI, true); else { drawSlots(); sumLine(); }
+            requestAnimationFrame(head); addEventListener('resize', head);
+
+            /* ---- Контакты ---- */
+            Shop.maskTel($('#phone'));
+
+            /* ---- Отправка ---- */
+            function bad(id, errId, on) { var el = $(id); if (on) el.setAttribute('aria-invalid', 'true'); else el.removeAttribute('aria-invalid'); $(errId).hidden = !on; return on; }
+            $$('#name,#addr').forEach(function (el) { el.addEventListener('input', function () { el.removeAttribute('aria-invalid'); $('#' + el.id + 'E').hidden = true; }); });
+            $('#phone').addEventListener('input', function () { $('#phoneE').hidden = true; });
+
+            $('#form').addEventListener('submit', function (e) {
+                e.preventDefault();
+                var errs = [];
+                if (bad('#name', '#nameE', !$('#name').value.trim())) errs.push('#name');
+                if (bad('#phone', '#phoneE', Shop.telDigits($('#phone').value).length !== 10)) errs.push('#phone');
+                if (ship === 'courier' && bad('#addr', '#addrE', !$('#addr').value.trim())) errs.push('#addr');
+                if (selI === null || selH === null) { $('#dtpE').hidden = false; errs.push('#dtp'); }
+                if (errs.length) { var f = $(errs[0]); f.scrollIntoView({ behavior: 'smooth', block: 'center' }); if (f.focus) f.focus({ preventScroll: true }); return; }
+
+                var fee = ship === 'courier' ? C.courierFee : 0, d = addD(T0, selI);
+                var order = {
+                    no: String(Date.now() % 10000).padStart(4, '0'),
+                    createdAt: new Date().toISOString(),
+                    items: Shop.lines().map(function (x) { return { id: x.p.id, name: x.name, img: x.p.img, price: x.price, q: x.l.q, sum: x.sum }; }),
+                    card: Shop.card(), shipping: ship, fee: fee, address: ship === 'courier' ? $('#addr').value.trim() : C.address,
+                    day: dayName(selI), date: d.toISOString().slice(0, 10), from: selH, to: selH + 1,
+                    name: $('#name').value.trim(), phone: Shop.telFmt(Shop.telDigits($('#phone').value)), comment: $('#comment').value.trim(),
+                    total: Shop.total() + fee, demo: !!C.demo
+                };
+                var btn = $('#pay'); btn.disabled = true; btn.textContent = 'Отправляем…'; $('#fail').hidden = true;
+                Shop.submitOrder(order).then(function (r) {
+                    if (!r || !r.ok) throw new Error('fail');
+                    sent = true; Shop.clear(); location.href = 'success.html';
+                }).catch(function () { btn.disabled = false; btn.textContent = 'Оформить заказ'; $('#fail').hidden = false; });
+            });
+        })();
+    </script>
+</body>
+
+</html>

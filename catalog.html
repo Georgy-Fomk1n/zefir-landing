@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Каталог — Зефир и пряник: пирожные, зефир, пряники, торты</title>
+    <meta name="description" content="Каталог кондитерской «Зефир и пряник»: корпусные пирожные, ПП-десерты без сахара, зефир на натуральном пюре, имбирные пряники, торты на заказ. Москва, ул. Базовская, 17.">
+    <link rel="canonical" href="https://zefiripryanik.ru/catalog.html">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&family=Caveat:wght@500&display=swap">
+    <link rel="stylesheet" href="css/shop.css">
+</head>
+
+<body>
+    <div id="site-header"></div>
+
+    <main class="g" style="padding-block:24px 120px">
+        <div class="w" style="display:flex;flex-direction:column;gap:32px">
+            <nav class="crumbs" aria-label="Навигация"><a href="index.html">Главная</a><span aria-hidden="true">/</span><span>Каталог</span></nav>
+
+            <div style="display:flex;flex-wrap:wrap;gap:24px 48px;align-items:flex-end;justify-content:space-between">
+                <div style="display:flex;flex-direction:column;gap:16px">
+                    <span class="eyebrow">Витрина на Базовской, 17</span>
+                    <h1 class="d1b">Каталог</h1>
+                </div>
+                <p class="lead" style="font-size:17px;line-height:28px;max-width:44ch">Пирожные готовим небольшими партиями, чтобы не залёживались. Зефир, букеты и торты делаем на заказ.</p>
+            </div>
+
+            <div class="toolbar">
+                <div class="chips" id="chips" role="group" aria-label="Категория"></div>
+                <label class="sort">Сортировка
+                    <select class="sel" id="sort">
+                        <option value="pop">Сначала популярные</option>
+                        <option value="asc">Сначала дешевле</option>
+                        <option value="desc">Сначала дороже</option>
+                    </select>
+                </label>
+            </div>
+
+            <div class="grid" id="grid" aria-live="polite"></div>
+            <p class="empty" id="empty" hidden>В этой категории пока ничего нет.</p>
+
+            <section class="about" aria-label="О кондитерской">
+                <h2>Кондитерская <em style="color:var(--choc-2)">на Базовской</em></h2>
+                <p>«Зефир и пряник» — кондитерская в Москве на ул. Базовская, 17. Делаем зефир на натуральном фруктовом пюре, корпусные и ПП-пирожные, имбирные пряники с росписью, зефирные букеты, бенто-торты и торты на заказ. Работаем со вторника по воскресенье с 10:00 до 21:00.</p>
+            </section>
+        </div>
+    </main>
+
+    <div id="site-footer"></div>
+
+    <script src="js/products.js"></script>
+    <script src="js/shop.js"></script>
+    <script>
+        Shop.init({ active: 'catalog' });
+        (function () {
+            var $ = Shop.$, P = window.PRODUCTS, T = window.CATEGORY_TEST;
+            var params = new URLSearchParams(location.search);
+            var cat = T[params.get('cat')] ? params.get('cat') : 'all', sort = 'pop';
+
+            function minPrice(p) { return typeof p.price === 'number' ? p.price : null; }
+            function list() {
+                var r = P.filter(T[cat]);
+                if (sort !== 'pop') {
+                    var dir = sort === 'asc' ? 1 : -1;
+                    r = r.map(function (p, i) { return { p: p, i: i }; }).sort(function (a, b) {
+                        var x = minPrice(a.p), y = minPrice(b.p);
+                        if (x === null && y === null) return a.i - b.i;
+                        if (x === null) return 1;
+                        if (y === null) return -1;
+                        return (x - y) * dir || a.i - b.i;
+                    }).map(function (o) { return o.p; });
+                }
+                return r;
+            }
+            function chips() {
+                $('#chips').innerHTML = window.CATEGORIES.map(function (c) {
+                    return '<button class="chip-b" type="button" data-c="' + c.id + '" aria-pressed="' + (c.id === cat) + '">' + c.label + '<span>' + P.filter(T[c.id]).length + '</span></button>';
+                }).join('');
+            }
+            function draw(animate) {
+                var r = list();
+                $('#grid').innerHTML = r.map(function (p, i) { return Shop.cardHtml(p, i); }).join('');
+                $('#empty').hidden = r.length > 0;
+                if (animate) Shop.$$('#grid .card').forEach(function (c) { c.classList.add('in'); });
+                Shop.syncBuy();
+            }
+            $('#chips').addEventListener('click', function (e) {
+                var b = e.target.closest('[data-c]'); if (!b) return;
+                cat = b.dataset.c; chips(); draw(true);
+                var u = new URL(location.href); cat === 'all' ? u.searchParams.delete('cat') : u.searchParams.set('cat', cat);
+                history.replaceState(null, '', u);
+            });
+            $('#sort').addEventListener('change', function (e) { sort = e.target.value; draw(true); });
+            chips(); draw(false);
+        })();
+    </script>
+</body>
+
+</html>
