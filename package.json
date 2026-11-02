@@ -1,0 +1,25 @@
+{
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "images": "node scripts/images.mjs",
+    "release": "bash scripts/release.sh"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^5.0.0",
+    "laravel-vite-plugin": "^2.0.0",
+    "sharp": "^0.34.0",
+    "vite": "^7.0.0"
+  },
+  "dependencies": {
+    "@fontsource-variable/inter": "^5.2.0",
+    "@fontsource/cormorant-garamond": "^5.2.0",
+    "@fontsource/caveat": "^5.2.0",
+    "motion": "^12.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "name": "zefir-i-pryanik"
+}
