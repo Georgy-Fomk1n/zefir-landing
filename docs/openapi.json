@@ -1,0 +1,2327 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "Зефир и пряник API",
+        "version": "1.0",
+        "description": "Сгенерировано командой php artisan api:openapi. Типы ответов — packages/shared/src/types.ts."
+    },
+    "servers": [
+        {
+            "url": "https://api.xn-----mlchgbbqzthe9b5k.xn--p1ai"
+        },
+        {
+            "url": "http://localhost:8000"
+        }
+    ],
+    "components": {
+        "securitySchemes": {
+            "bearer": {
+                "type": "http",
+                "scheme": "bearer",
+                "description": "Sanctum API token"
+            }
+        }
+    },
+    "paths": {
+        "/api/_deploy/run": {
+            "post": {
+                "tags": [
+                    "Публичное API"
+                ],
+                "operationId": "post__deploy_run",
+                "summary": "DeployHookController",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/account/delete": {
+            "post": {
+                "tags": [
+                    "Кабинет покупателя"
+                ],
+                "operationId": "post_account_delete",
+                "summary": "ProfileController::destroy",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: customer."
+            }
+        },
+        "/api/account/favorites": {
+            "get": {
+                "tags": [
+                    "Кабинет покупателя"
+                ],
+                "operationId": "get_account_favorites",
+                "summary": "FavoriteController::index",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: customer."
+            }
+        },
+        "/api/account/favorites/{product}": {
+            "post": {
+                "tags": [
+                    "Кабинет покупателя"
+                ],
+                "operationId": "post_account_favorites_product",
+                "summary": "FavoriteController::store",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: customer.",
+                "parameters": [
+                    {
+                        "name": "product",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Кабинет покупателя"
+                ],
+                "operationId": "delete_account_favorites_product",
+                "summary": "FavoriteController::destroy",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: customer.",
+                "parameters": [
+                    {
+                        "name": "product",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/api/account/loyalty": {
+            "get": {
+                "tags": [
+                    "Кабинет покупателя"
+                ],
+                "operationId": "get_account_loyalty",
+                "summary": "LoyaltyController::show",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: customer."
+            }
+        },
+        "/api/account/orders": {
+            "get": {
+                "tags": [
+                    "Кабинет покупателя"
+                ],
+                "operationId": "get_account_orders",
+                "summary": "AccountOrderController::index",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: customer."
+            }
+        },
+        "/api/account/orders/{order}": {
+            "get": {
+                "tags": [
+                    "Кабинет покупателя"
+                ],
+                "operationId": "get_account_orders_order",
+                "summary": "AccountOrderController::show",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: customer.",
+                "parameters": [
+                    {
+                        "name": "order",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/api/account/orders/{order}/reviews": {
+            "post": {
+                "tags": [
+                    "Кабинет покупателя"
+                ],
+                "operationId": "post_account_orders_order_reviews",
+                "summary": "AccountOrderController::review",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: customer.",
+                "parameters": [
+                    {
+                        "name": "order",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/api/account/password": {
+            "put": {
+                "tags": [
+                    "Кабинет покупателя"
+                ],
+                "operationId": "put_account_password",
+                "summary": "ProfileController::password",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: customer."
+            }
+        },
+        "/api/account/payment-methods": {
+            "get": {
+                "tags": [
+                    "Кабинет покупателя"
+                ],
+                "operationId": "get_account_payment_methods",
+                "summary": "SubscriptionController::paymentMethods",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: customer."
+            }
+        },
+        "/api/account/payment-methods/{id}": {
+            "delete": {
+                "tags": [
+                    "Кабинет покупателя"
+                ],
+                "operationId": "delete_account_payment_methods_id",
+                "summary": "SubscriptionController::unlinkCard",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: customer.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/api/account/profile": {
+            "put": {
+                "tags": [
+                    "Кабинет покупателя"
+                ],
+                "operationId": "put_account_profile",
+                "summary": "ProfileController::update",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: customer."
+            }
+        },
+        "/api/account/subscriptions": {
+            "get": {
+                "tags": [
+                    "Кабинет покупателя"
+                ],
+                "operationId": "get_account_subscriptions",
+                "summary": "SubscriptionController::index",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: customer."
+            },
+            "post": {
+                "tags": [
+                    "Кабинет покупателя"
+                ],
+                "operationId": "post_account_subscriptions",
+                "summary": "SubscriptionController::store",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: customer."
+            }
+        },
+        "/api/account/subscriptions/{subscription}/cancel": {
+            "post": {
+                "tags": [
+                    "Кабинет покупателя"
+                ],
+                "operationId": "post_account_subscriptions_subscription_cancel",
+                "summary": "SubscriptionController::cancel",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: customer.",
+                "parameters": [
+                    {
+                        "name": "subscription",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/api/auth/login": {
+            "post": {
+                "tags": [
+                    "Покупатель: вход"
+                ],
+                "operationId": "post_auth_login",
+                "summary": "AuthController::login",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "description": "required|email"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "description": "required|string"
+                                    },
+                                    "code": {
+                                        "type": "string",
+                                        "description": "sometimes|nullable|string|max:10"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/logout": {
+            "post": {
+                "tags": [
+                    "Покупатель: вход"
+                ],
+                "operationId": "post_auth_logout",
+                "summary": "AuthController::logout",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: customer."
+            }
+        },
+        "/api/auth/me": {
+            "get": {
+                "tags": [
+                    "Покупатель: вход"
+                ],
+                "operationId": "get_auth_me",
+                "summary": "AuthController::me",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: customer."
+            }
+        },
+        "/api/auth/register": {
+            "post": {
+                "tags": [
+                    "Покупатель: вход"
+                ],
+                "operationId": "post_auth_register",
+                "summary": "AuthController::register",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "description": "required|string|min:2|max:100"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "description": "required|email:rfc|max:190|unique:users,email"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "description": "nullable|string|regex:/^\\+?[78][\\d\\s()-]{9,}$/"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "description": "required|string|Password"
+                                    },
+                                    "consent": {
+                                        "type": "string",
+                                        "description": "accepted"
+                                    },
+                                    "marketingConsent": {
+                                        "type": "string",
+                                        "description": "sometimes|boolean"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/cart": {
+            "get": {
+                "tags": [
+                    "Кабинет покупателя"
+                ],
+                "operationId": "get_cart",
+                "summary": "CartController::show",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: customer."
+            },
+            "put": {
+                "tags": [
+                    "Кабинет покупателя"
+                ],
+                "operationId": "put_cart",
+                "summary": "CartController::replace",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: customer."
+            }
+        },
+        "/api/cart/merge": {
+            "post": {
+                "tags": [
+                    "Кабинет покупателя"
+                ],
+                "operationId": "post_cart_merge",
+                "summary": "CartController::merge",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: customer."
+            }
+        },
+        "/api/cart/quote": {
+            "post": {
+                "tags": [
+                    "Публичное API"
+                ],
+                "operationId": "post_cart_quote",
+                "summary": "CartController::quote",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "lines": {
+                                        "type": "string",
+                                        "description": "present|array|max:50"
+                                    },
+                                    "lines.*.variantId": {
+                                        "type": "string",
+                                        "description": "required|integer|min:1"
+                                    },
+                                    "lines.*.qty": {
+                                        "type": "string",
+                                        "description": "required|integer|min:1|max:100"
+                                    },
+                                    "fulfilment": {
+                                        "type": "string",
+                                        "description": "required|Enum"
+                                    },
+                                    "promoCode": {
+                                        "type": "string",
+                                        "description": "nullable|string|max:64"
+                                    },
+                                    "points": {
+                                        "type": "string",
+                                        "description": "nullable|integer|min:0"
+                                    },
+                                    "address": {
+                                        "type": "string",
+                                        "description": "nullable|array"
+                                    },
+                                    "address.text": {
+                                        "type": "string",
+                                        "description": "nullable|string|max:300"
+                                    },
+                                    "address.lat": {
+                                        "type": "string",
+                                        "description": "nullable|numeric|between:-90,90"
+                                    },
+                                    "address.lng": {
+                                        "type": "string",
+                                        "description": "nullable|numeric|between:-180,180"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/catalog/categories": {
+            "get": {
+                "tags": [
+                    "Публичное API"
+                ],
+                "operationId": "get_catalog_categories",
+                "summary": "CatalogController::categories",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/catalog/export": {
+            "get": {
+                "tags": [
+                    "Публичное API"
+                ],
+                "operationId": "get_catalog_export",
+                "summary": "CatalogController::export",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/catalog/products": {
+            "get": {
+                "tags": [
+                    "Публичное API"
+                ],
+                "operationId": "get_catalog_products",
+                "summary": "CatalogController::products",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/catalog/products/{slug}": {
+            "get": {
+                "tags": [
+                    "Публичное API"
+                ],
+                "operationId": "get_catalog_products_slug",
+                "summary": "CatalogController::product",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "slug",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/api/geo/suggest": {
+            "get": {
+                "tags": [
+                    "Публичное API"
+                ],
+                "operationId": "get_geo_suggest",
+                "summary": "CheckoutController::suggest",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/health": {
+            "get": {
+                "tags": [
+                    "Публичное API"
+                ],
+                "operationId": "get_health",
+                "summary": "HealthController",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/orders": {
+            "post": {
+                "tags": [
+                    "Публичное API"
+                ],
+                "operationId": "post_orders",
+                "summary": "CheckoutController::place",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "lines": {
+                                        "type": "string",
+                                        "description": "present|array|max:50"
+                                    },
+                                    "lines.*.variantId": {
+                                        "type": "string",
+                                        "description": "required|integer|min:1"
+                                    },
+                                    "lines.*.qty": {
+                                        "type": "string",
+                                        "description": "required|integer|min:1|max:100"
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "description": "required|string|min:2|max:100"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "description": "required|string|regex:/^\\+?[78][\\d\\s()-]{9,}$/"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "description": "nullable|email:rfc|max:190"
+                                    },
+                                    "fulfilment": {
+                                        "type": "string",
+                                        "description": "required|Enum"
+                                    },
+                                    "slotId": {
+                                        "type": "string",
+                                        "description": "nullable|integer"
+                                    },
+                                    "address": {
+                                        "type": "string",
+                                        "description": "required|array"
+                                    },
+                                    "address.text": {
+                                        "type": "string",
+                                        "description": "required|string|max:300"
+                                    },
+                                    "address.lat": {
+                                        "type": "string",
+                                        "description": "nullable|numeric|between:-90,90"
+                                    },
+                                    "address.lng": {
+                                        "type": "string",
+                                        "description": "nullable|numeric|between:-180,180"
+                                    },
+                                    "address.entrance": {
+                                        "type": "string",
+                                        "description": "nullable|string|max:20"
+                                    },
+                                    "address.floor": {
+                                        "type": "string",
+                                        "description": "nullable|string|max:20"
+                                    },
+                                    "address.intercom": {
+                                        "type": "string",
+                                        "description": "nullable|string|max:40"
+                                    },
+                                    "comment": {
+                                        "type": "string",
+                                        "description": "nullable|string|max:1000"
+                                    },
+                                    "promoCode": {
+                                        "type": "string",
+                                        "description": "nullable|string|max:64"
+                                    },
+                                    "points": {
+                                        "type": "string",
+                                        "description": "nullable|integer|min:0"
+                                    },
+                                    "consent": {
+                                        "type": "string",
+                                        "description": "accepted"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/payments/fake/{payment}": {
+            "get": {
+                "tags": [
+                    "Публичное API"
+                ],
+                "operationId": "get_payments_fake_payment",
+                "summary": "PaymentWebhookController::fake",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "payment",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/api/slots": {
+            "get": {
+                "tags": [
+                    "Публичное API"
+                ],
+                "operationId": "get_slots",
+                "summary": "CheckoutController::slots",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/staff/admin/categories": {
+            "get": {
+                "tags": [
+                    "Админ"
+                ],
+                "operationId": "get_staff_admin_categories",
+                "summary": "CatalogAdminController::categories",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: staff. Роли: admin."
+            },
+            "post": {
+                "tags": [
+                    "Админ"
+                ],
+                "operationId": "post_staff_admin_categories",
+                "summary": "CatalogAdminController::saveCategory",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: staff. Роли: admin."
+            }
+        },
+        "/api/staff/admin/categories/{category}": {
+            "put": {
+                "tags": [
+                    "Админ"
+                ],
+                "operationId": "put_staff_admin_categories_category",
+                "summary": "CatalogAdminController::saveCategory",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: staff. Роли: admin.",
+                "parameters": [
+                    {
+                        "name": "category",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/api/staff/admin/password-suggestion": {
+            "get": {
+                "tags": [
+                    "Админ"
+                ],
+                "operationId": "get_staff_admin_password_suggestion",
+                "summary": "AdminController::newPassword",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: staff. Роли: admin."
+            }
+        },
+        "/api/staff/admin/plans": {
+            "get": {
+                "tags": [
+                    "Админ"
+                ],
+                "operationId": "get_staff_admin_plans",
+                "summary": "AdminController::plans",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: staff. Роли: admin."
+            },
+            "post": {
+                "tags": [
+                    "Админ"
+                ],
+                "operationId": "post_staff_admin_plans",
+                "summary": "AdminController::savePlan",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: staff. Роли: admin."
+            }
+        },
+        "/api/staff/admin/plans/{plan}": {
+            "put": {
+                "tags": [
+                    "Админ"
+                ],
+                "operationId": "put_staff_admin_plans_plan",
+                "summary": "AdminController::savePlan",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: staff. Роли: admin.",
+                "parameters": [
+                    {
+                        "name": "plan",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/api/staff/admin/products": {
+            "get": {
+                "tags": [
+                    "Админ"
+                ],
+                "operationId": "get_staff_admin_products",
+                "summary": "CatalogAdminController::products",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: staff. Роли: admin."
+            },
+            "post": {
+                "tags": [
+                    "Админ"
+                ],
+                "operationId": "post_staff_admin_products",
+                "summary": "CatalogAdminController::storeProduct",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: staff. Роли: admin.",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "category_id": {
+                                        "type": "string",
+                                        "description": "required|exists:categories,id"
+                                    },
+                                    "slug": {
+                                        "type": "string",
+                                        "description": "required|string|max:120|regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/|Unique"
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "description": "required|string|max:190"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "description": "required|string|max:5000"
+                                    },
+                                    "is_pp": {
+                                        "type": "string",
+                                        "description": "boolean"
+                                    },
+                                    "is_active": {
+                                        "type": "string",
+                                        "description": "boolean"
+                                    },
+                                    "sort": {
+                                        "type": "string",
+                                        "description": "integer|min:0"
+                                    },
+                                    "related": {
+                                        "type": "string",
+                                        "description": "nullable|array"
+                                    },
+                                    "related.*": {
+                                        "type": "string",
+                                        "description": "string|max:120"
+                                    },
+                                    "seo_title": {
+                                        "type": "string",
+                                        "description": "nullable|string|max:70"
+                                    },
+                                    "seo_description": {
+                                        "type": "string",
+                                        "description": "nullable|string|max:170"
+                                    },
+                                    "seo_h1": {
+                                        "type": "string",
+                                        "description": "nullable|string|max:190"
+                                    },
+                                    "seo_text": {
+                                        "type": "string",
+                                        "description": "nullable|string|max:10000"
+                                    },
+                                    "noindex": {
+                                        "type": "string",
+                                        "description": "boolean"
+                                    },
+                                    "media": {
+                                        "type": "string",
+                                        "description": "nullable|array"
+                                    },
+                                    "media.*.type": {
+                                        "type": "string",
+                                        "description": "required|In"
+                                    },
+                                    "media.*.name": {
+                                        "type": "string",
+                                        "description": "required|string|max:120|regex:/^[a-z0-9-]+$/"
+                                    },
+                                    "media.*.alt": {
+                                        "type": "string",
+                                        "description": "required|string|max:190"
+                                    },
+                                    "variants": {
+                                        "type": "string",
+                                        "description": "required|array|min:1"
+                                    },
+                                    "variants.*.id": {
+                                        "type": "string",
+                                        "description": "nullable|integer"
+                                    },
+                                    "variants.*.sku": {
+                                        "type": "string",
+                                        "description": "required|string|max:64"
+                                    },
+                                    "variants.*.name": {
+                                        "type": "string",
+                                        "description": "required|string|max:190"
+                                    },
+                                    "variants.*.pack_size": {
+                                        "type": "string",
+                                        "description": "integer|min:1"
+                                    },
+                                    "variants.*.price": {
+                                        "type": "string",
+                                        "description": "required|integer|min:0"
+                                    },
+                                    "variants.*.price_from": {
+                                        "type": "string",
+                                        "description": "boolean"
+                                    },
+                                    "variants.*.stock": {
+                                        "type": "string",
+                                        "description": "required|integer|min:0"
+                                    },
+                                    "variants.*.is_active": {
+                                        "type": "string",
+                                        "description": "boolean"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/staff/admin/products/{product}": {
+            "put": {
+                "tags": [
+                    "Админ"
+                ],
+                "operationId": "put_staff_admin_products_product",
+                "summary": "CatalogAdminController::updateProduct",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: staff. Роли: admin.",
+                "parameters": [
+                    {
+                        "name": "product",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "category_id": {
+                                        "type": "string",
+                                        "description": "required|exists:categories,id"
+                                    },
+                                    "slug": {
+                                        "type": "string",
+                                        "description": "required|string|max:120|regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/|Unique"
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "description": "required|string|max:190"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "description": "required|string|max:5000"
+                                    },
+                                    "is_pp": {
+                                        "type": "string",
+                                        "description": "boolean"
+                                    },
+                                    "is_active": {
+                                        "type": "string",
+                                        "description": "boolean"
+                                    },
+                                    "sort": {
+                                        "type": "string",
+                                        "description": "integer|min:0"
+                                    },
+                                    "related": {
+                                        "type": "string",
+                                        "description": "nullable|array"
+                                    },
+                                    "related.*": {
+                                        "type": "string",
+                                        "description": "string|max:120"
+                                    },
+                                    "seo_title": {
+                                        "type": "string",
+                                        "description": "nullable|string|max:70"
+                                    },
+                                    "seo_description": {
+                                        "type": "string",
+                                        "description": "nullable|string|max:170"
+                                    },
+                                    "seo_h1": {
+                                        "type": "string",
+                                        "description": "nullable|string|max:190"
+                                    },
+                                    "seo_text": {
+                                        "type": "string",
+                                        "description": "nullable|string|max:10000"
+                                    },
+                                    "noindex": {
+                                        "type": "string",
+                                        "description": "boolean"
+                                    },
+                                    "media": {
+                                        "type": "string",
+                                        "description": "nullable|array"
+                                    },
+                                    "media.*.type": {
+                                        "type": "string",
+                                        "description": "required|In"
+                                    },
+                                    "media.*.name": {
+                                        "type": "string",
+                                        "description": "required|string|max:120|regex:/^[a-z0-9-]+$/"
+                                    },
+                                    "media.*.alt": {
+                                        "type": "string",
+                                        "description": "required|string|max:190"
+                                    },
+                                    "variants": {
+                                        "type": "string",
+                                        "description": "required|array|min:1"
+                                    },
+                                    "variants.*.id": {
+                                        "type": "string",
+                                        "description": "nullable|integer"
+                                    },
+                                    "variants.*.sku": {
+                                        "type": "string",
+                                        "description": "required|string|max:64"
+                                    },
+                                    "variants.*.name": {
+                                        "type": "string",
+                                        "description": "required|string|max:190"
+                                    },
+                                    "variants.*.pack_size": {
+                                        "type": "string",
+                                        "description": "integer|min:1"
+                                    },
+                                    "variants.*.price": {
+                                        "type": "string",
+                                        "description": "required|integer|min:0"
+                                    },
+                                    "variants.*.price_from": {
+                                        "type": "string",
+                                        "description": "boolean"
+                                    },
+                                    "variants.*.stock": {
+                                        "type": "string",
+                                        "description": "required|integer|min:0"
+                                    },
+                                    "variants.*.is_active": {
+                                        "type": "string",
+                                        "description": "boolean"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Админ"
+                ],
+                "operationId": "delete_staff_admin_products_product",
+                "summary": "CatalogAdminController::destroyProduct",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: staff. Роли: admin.",
+                "parameters": [
+                    {
+                        "name": "product",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/api/staff/admin/promo-codes": {
+            "get": {
+                "tags": [
+                    "Админ"
+                ],
+                "operationId": "get_staff_admin_promo_codes",
+                "summary": "AdminController::promoCodes",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: staff. Роли: admin."
+            },
+            "post": {
+                "tags": [
+                    "Админ"
+                ],
+                "operationId": "post_staff_admin_promo_codes",
+                "summary": "AdminController::savePromoCode",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: staff. Роли: admin."
+            }
+        },
+        "/api/staff/admin/promo-codes/{promoCode}": {
+            "put": {
+                "tags": [
+                    "Админ"
+                ],
+                "operationId": "put_staff_admin_promo_codes_promoCode",
+                "summary": "AdminController::savePromoCode",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: staff. Роли: admin.",
+                "parameters": [
+                    {
+                        "name": "promoCode",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/api/staff/admin/reports/orders.csv": {
+            "get": {
+                "tags": [
+                    "Админ"
+                ],
+                "operationId": "get_staff_admin_reports_orders_csv",
+                "summary": "AdminController::exportOrders",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: staff. Роли: admin."
+            }
+        },
+        "/api/staff/admin/reports/summary": {
+            "get": {
+                "tags": [
+                    "Админ"
+                ],
+                "operationId": "get_staff_admin_reports_summary",
+                "summary": "AdminController::report",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: staff. Роли: admin."
+            }
+        },
+        "/api/staff/admin/reviews": {
+            "get": {
+                "tags": [
+                    "Админ"
+                ],
+                "operationId": "get_staff_admin_reviews",
+                "summary": "AdminController::reviews",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: staff. Роли: admin."
+            }
+        },
+        "/api/staff/admin/reviews/{review}": {
+            "post": {
+                "tags": [
+                    "Админ"
+                ],
+                "operationId": "post_staff_admin_reviews_review",
+                "summary": "AdminController::moderateReview",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: staff. Роли: admin.",
+                "parameters": [
+                    {
+                        "name": "review",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/api/staff/admin/seo-pages": {
+            "get": {
+                "tags": [
+                    "Админ"
+                ],
+                "operationId": "get_staff_admin_seo_pages",
+                "summary": "AdminController::seoPages",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: staff. Роли: admin."
+            },
+            "post": {
+                "tags": [
+                    "Админ"
+                ],
+                "operationId": "post_staff_admin_seo_pages",
+                "summary": "AdminController::saveSeoPage",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: staff. Роли: admin."
+            }
+        },
+        "/api/staff/admin/slots": {
+            "get": {
+                "tags": [
+                    "Админ"
+                ],
+                "operationId": "get_staff_admin_slots",
+                "summary": "AdminController::slots",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: staff. Роли: admin."
+            }
+        },
+        "/api/staff/admin/slots/generate": {
+            "post": {
+                "tags": [
+                    "Админ"
+                ],
+                "operationId": "post_staff_admin_slots_generate",
+                "summary": "AdminController::generateSlots",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: staff. Роли: admin."
+            }
+        },
+        "/api/staff/admin/slots/{slot}": {
+            "patch": {
+                "tags": [
+                    "Админ"
+                ],
+                "operationId": "patch_staff_admin_slots_slot",
+                "summary": "AdminController::updateSlot",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: staff. Роли: admin.",
+                "parameters": [
+                    {
+                        "name": "slot",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/api/staff/admin/users": {
+            "get": {
+                "tags": [
+                    "Админ"
+                ],
+                "operationId": "get_staff_admin_users",
+                "summary": "AdminController::users",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: staff. Роли: admin."
+            },
+            "post": {
+                "tags": [
+                    "Админ"
+                ],
+                "operationId": "post_staff_admin_users",
+                "summary": "AdminController::saveUser",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: staff. Роли: admin."
+            }
+        },
+        "/api/staff/admin/users/{user}": {
+            "put": {
+                "tags": [
+                    "Админ"
+                ],
+                "operationId": "put_staff_admin_users_user",
+                "summary": "AdminController::saveUser",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: staff. Роли: admin.",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/api/staff/admin/users/{user}/reset-2fa": {
+            "post": {
+                "tags": [
+                    "Админ"
+                ],
+                "operationId": "post_staff_admin_users_user_reset_2fa",
+                "summary": "AdminController::resetTwoFactor",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: staff. Роли: admin.",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/api/staff/admin/variants/{variant}": {
+            "patch": {
+                "tags": [
+                    "Админ"
+                ],
+                "operationId": "patch_staff_admin_variants_variant",
+                "summary": "CatalogAdminController::updateVariant",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: staff. Роли: admin.",
+                "parameters": [
+                    {
+                        "name": "variant",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/api/staff/admin/zones": {
+            "get": {
+                "tags": [
+                    "Админ"
+                ],
+                "operationId": "get_staff_admin_zones",
+                "summary": "AdminController::zones",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: staff. Роли: admin."
+            },
+            "post": {
+                "tags": [
+                    "Админ"
+                ],
+                "operationId": "post_staff_admin_zones",
+                "summary": "AdminController::saveZone",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: staff. Роли: admin."
+            }
+        },
+        "/api/staff/admin/zones/{zone}": {
+            "put": {
+                "tags": [
+                    "Админ"
+                ],
+                "operationId": "put_staff_admin_zones_zone",
+                "summary": "AdminController::saveZone",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: staff. Роли: admin.",
+                "parameters": [
+                    {
+                        "name": "zone",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/api/staff/auth/login": {
+            "post": {
+                "tags": [
+                    "Сотрудники: вход"
+                ],
+                "operationId": "post_staff_auth_login",
+                "summary": "StaffAuthController::login",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "description": "required|email"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "description": "required|string"
+                                    },
+                                    "code": {
+                                        "type": "string",
+                                        "description": "sometimes|nullable|string|max:10"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/staff/auth/logout": {
+            "post": {
+                "tags": [
+                    "Сотрудники: вход"
+                ],
+                "operationId": "post_staff_auth_logout",
+                "summary": "StaffAuthController::logout",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: staff."
+            }
+        },
+        "/api/staff/auth/me": {
+            "get": {
+                "tags": [
+                    "Сотрудники: вход"
+                ],
+                "operationId": "get_staff_auth_me",
+                "summary": "StaffAuthController::me",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: staff."
+            }
+        },
+        "/api/staff/courier/deliveries/{delivery}": {
+            "get": {
+                "tags": [
+                    "Курьер"
+                ],
+                "operationId": "get_staff_courier_deliveries_delivery",
+                "summary": "CourierController::show",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: staff. Роли: courier.",
+                "parameters": [
+                    {
+                        "name": "delivery",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/api/staff/courier/deliveries/{delivery}/status": {
+            "post": {
+                "tags": [
+                    "Курьер"
+                ],
+                "operationId": "post_staff_courier_deliveries_delivery_status",
+                "summary": "CourierController::transition",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: staff. Роли: courier.",
+                "parameters": [
+                    {
+                        "name": "delivery",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "status": {
+                                        "type": "string",
+                                        "description": "required|Enum"
+                                    },
+                                    "reason": {
+                                        "type": "string",
+                                        "description": "nullable|string|max:300"
+                                    },
+                                    "lat": {
+                                        "type": "string",
+                                        "description": "nullable|numeric|between:-90,90"
+                                    },
+                                    "lng": {
+                                        "type": "string",
+                                        "description": "nullable|numeric|between:-180,180"
+                                    },
+                                    "happenedAt": {
+                                        "type": "string",
+                                        "description": "nullable|date|before_or_equal:now"
+                                    },
+                                    "clientActionId": {
+                                        "type": "string",
+                                        "description": "nullable|string|max:64"
+                                    },
+                                    "codMethod": {
+                                        "type": "string",
+                                        "description": "nullable|In"
+                                    },
+                                    "codAmount": {
+                                        "type": "string",
+                                        "description": "nullable|integer|min:0"
+                                    },
+                                    "photo": {
+                                        "type": "string",
+                                        "description": "nullable|image|max:8192"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/staff/courier/shift/end": {
+            "post": {
+                "tags": [
+                    "Курьер"
+                ],
+                "operationId": "post_staff_courier_shift_end",
+                "summary": "CourierController::endShift",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: staff. Роли: courier."
+            }
+        },
+        "/api/staff/courier/shift/start": {
+            "post": {
+                "tags": [
+                    "Курьер"
+                ],
+                "operationId": "post_staff_courier_shift_start",
+                "summary": "CourierController::startShift",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: staff. Роли: courier."
+            }
+        },
+        "/api/staff/courier/today": {
+            "get": {
+                "tags": [
+                    "Курьер"
+                ],
+                "operationId": "get_staff_courier_today",
+                "summary": "CourierController::today",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: staff. Роли: courier."
+            }
+        },
+        "/api/staff/seller/deliveries": {
+            "get": {
+                "tags": [
+                    "Продавец"
+                ],
+                "operationId": "get_staff_seller_deliveries",
+                "summary": "DeliveryBoardController::board",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: staff. Роли: seller,admin."
+            }
+        },
+        "/api/staff/seller/orders/{order}/assign": {
+            "post": {
+                "tags": [
+                    "Продавец"
+                ],
+                "operationId": "post_staff_seller_orders_order_assign",
+                "summary": "DeliveryBoardController::assign",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: staff. Роли: seller,admin.",
+                "parameters": [
+                    {
+                        "name": "order",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/api/staff/seller/orders/{order}/cancel": {
+            "post": {
+                "tags": [
+                    "Продавец"
+                ],
+                "operationId": "post_staff_seller_orders_order_cancel",
+                "summary": "SellerController::cancel",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: staff. Роли: seller,admin.",
+                "parameters": [
+                    {
+                        "name": "order",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/api/staff/seller/orders/{order}/returned": {
+            "post": {
+                "tags": [
+                    "Продавец"
+                ],
+                "operationId": "post_staff_seller_orders_order_returned",
+                "summary": "DeliveryBoardController::returned",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: staff. Роли: seller,admin.",
+                "parameters": [
+                    {
+                        "name": "order",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/api/staff/seller/orders/{order}/status": {
+            "post": {
+                "tags": [
+                    "Продавец"
+                ],
+                "operationId": "post_staff_seller_orders_order_status",
+                "summary": "SellerController::transition",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: staff. Роли: seller,admin.",
+                "parameters": [
+                    {
+                        "name": "order",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/api/staff/seller/queue": {
+            "get": {
+                "tags": [
+                    "Продавец"
+                ],
+                "operationId": "get_staff_seller_queue",
+                "summary": "SellerController::queue",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: staff. Роли: seller,admin."
+            }
+        },
+        "/api/staff/seller/scan/loyalty": {
+            "post": {
+                "tags": [
+                    "Продавец"
+                ],
+                "operationId": "post_staff_seller_scan_loyalty",
+                "summary": "SellerController::loyaltyScan",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: staff. Роли: seller,admin."
+            }
+        },
+        "/api/staff/seller/scan/subscription": {
+            "post": {
+                "tags": [
+                    "Продавец"
+                ],
+                "operationId": "post_staff_seller_scan_subscription",
+                "summary": "SellerController::subscriptionScan",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "description": "Токен: staff. Роли: seller,admin."
+            }
+        },
+        "/api/subscription-plans": {
+            "get": {
+                "tags": [
+                    "Публичное API"
+                ],
+                "operationId": "get_subscription_plans",
+                "summary": "SubscriptionController::plans",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/track/{token}": {
+            "get": {
+                "tags": [
+                    "Публичное API"
+                ],
+                "operationId": "get_track_token",
+                "summary": "CheckoutController::track",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "token",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        "/api/webhooks/payments": {
+            "post": {
+                "tags": [
+                    "Публичное API"
+                ],
+                "operationId": "post_webhooks_payments",
+                "summary": "PaymentWebhookController",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        }
+    }
+}

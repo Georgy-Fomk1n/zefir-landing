@@ -1,0 +1,85 @@
+# .htaccess публичного сайта (корень зефир-и-пряник.рф / staging.зефир-и-пряник.рф).
+# Генерируется frontend/scripts/postbuild.mjs; строки #PRODUCTION/#STAGING включаются по окружению.
+# Хосты в правилах — в punycode: Apache видит HTTP_HOST в ASCII-форме.
+
+Options -Indexes -MultiViews
+DirectoryIndex index.html
+DirectorySlash On
+AddDefaultCharset utf-8
+AddType application/manifest+json .webmanifest
+AddType image/avif .avif
+AddType video/webm .webm
+AddType application/xml .yml
+
+ErrorDocument 404 /404.html
+ErrorDocument 500 /500.html
+ErrorDocument 503 /500.html
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Один канонический хост: https, без www (301)
+#PRODUCTION   RewriteCond %{HTTPS} !=on [OR]
+#PRODUCTION   RewriteCond %{HTTP_HOST} ^www\. [NC]
+#PRODUCTION   RewriteRule ^ https://__CANONICAL_HOST__%{REQUEST_URI} [R=301,L,NE]
+#STAGING   RewriteCond %{HTTPS} !=on
+#STAGING   RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L,NE]
+
+  # Служебных кабинетов на основном домене нет: настоящий 404
+  RewriteRule ^(admin|seller|courier|staff)(/.*)?$ - [R=404,L,NC]
+
+  # Без index.html в URL: /catalog/index.html → /catalog/
+  RewriteCond %{THE_REQUEST} \s/+(.*/)?index\.html[\s?] [NC]
+  RewriteRule ^(.*/)?index\.html$ /$1 [R=301,L,NE]
+
+  # Параметры сортировки/фильтров/поиска: noindex,follow заголовком
+  RewriteCond %{QUERY_STRING} (^|&)(sort|pp|q|page|utm_[a-z]+)= [NC]
+  RewriteRule ^ - [E=ZP_NOINDEX:1]
+
+  # SPA-fallback только для закрытых разделов: личный кабинет
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^account/.+$ /account/index.html [L]
+
+  # Всё прочее, чего нет на диске, — настоящий 404 через ErrorDocument (без fallback на index.html)
+</IfModule>
+
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set X-Frame-Options "DENY"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(self), payment=(self)"
+  # Полный CSP (с хешами inline-скриптов) — в <meta> каждой страницы; здесь директивы, которые meta не поддерживает
+  Header always set Content-Security-Policy "frame-ancestors 'none'; base-uri 'self'; object-src 'none'"
+#PRODUCTION   Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+#STAGING   Header always set X-Robots-Tag "noindex, nofollow"
+  Header set X-Robots-Tag "noindex, follow" env=ZP_NOINDEX
+  Header set X-Robots-Tag "noindex, follow" env=REDIRECT_ZP_NOINDEX
+
+  # Хешированные ассеты — навсегда; HTML и служебные файлы — коротко, с ревалидацией
+  <FilesMatch "\.(js|css|woff2)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "\.(avif|webp|jpg|png|ico|mp4|webm|svg)$">
+    Header set Cache-Control "public, max-age=2592000"
+  </FilesMatch>
+  <FilesMatch "\.(html|xml|txt|webmanifest|yml)$">
+    Header set Cache-Control "public, max-age=300, must-revalidate"
+  </FilesMatch>
+  <FilesMatch "^(404|500)\.html$">
+    Header set X-Robots-Tag "noindex"
+  </FilesMatch>
+</IfModule>
+
+<IfModule mod_brotli.c>
+  AddOutputFilterByType BROTLI_COMPRESS text/html text/css text/plain text/xml application/javascript application/json application/xml application/manifest+json image/svg+xml
+</IfModule>
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml application/javascript application/json application/xml application/manifest+json image/svg+xml
+</IfModule>
+
+# Staging закрыт basic auth. Путь к .htpasswd на хостинге — секрет STAGING_HTPASSWD_PATH.
+#STAGING AuthType Basic
+#STAGING AuthName "Staging"
+#STAGING AuthUserFile __HTPASSWD__
+#STAGING Require valid-user

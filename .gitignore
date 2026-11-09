@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.DS_Store
+*.log
+.env
+.env.*
+!.env.example
+.lighthouseci/
+coverage/
+frontend/src/data/catalog.generated.json
+backend/database/e2e.sqlite
+e2e/test-results/
+e2e/report/
